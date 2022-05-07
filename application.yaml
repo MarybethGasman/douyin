@@ -1,0 +1,4 @@
+datasource:
+  driverName: mysql
+  dataSourceName: root:tanm146@tcp(127.0.0.1:3306)/douyin
+redis:

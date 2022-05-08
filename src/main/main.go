@@ -14,12 +14,20 @@ func newApp() *iris.Application {
 	mvc.Configure(app.Party("/douyin/user"), func(app *mvc.Application) {
 		app.Handle(new(UserController))
 	})
+	// 获取视频流
+	mvc.Configure(app.Party("/douyin/feed"), func(app *mvc.Application) {
+		app.Handle(new(FeedController))
+	})
+
 	return app
 }
 func main() {
 	addr := strconv.Itoa(AppConfig.Get("server.port").(int))
 	app := newApp()
-	app.Run(iris.Addr(":"+addr), iris.WithCharset("UTF-8"))
+	err := app.Run(iris.Addr(":"+addr), iris.WithCharset("UTF-8"))
+	if err != nil {
+		return
+	}
 }
 
 //func notFound(ctx iris.Context) {

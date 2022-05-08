@@ -1,7 +1,7 @@
 package controller
 
 import (
-	db2 "douyin/src/db"
+	. "douyin/src/db"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
@@ -13,7 +13,7 @@ func (uc *UserController) PostRegister(ctx iris.Context) mvc.Result {
 	var username = ctx.URLParam("username")
 	var password = ctx.URLParam("password")
 
-	db := db2.GetConnection()
+	db := DB
 
 	result, err := db.Exec(
 		"insert into tb_user(username,password) values(?,?)",
@@ -40,7 +40,7 @@ func (uc *UserController) PostLogin(ctx iris.Context) mvc.Result {
 	var username = ctx.URLParam("username")
 	var password = ctx.URLParam("password")
 
-	db := db2.GetConnection()
+	db := DB
 
 	rows := db.QueryRow(
 		"select password from tb_user where username = ?",

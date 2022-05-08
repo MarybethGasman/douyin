@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type MyCustomClaims struct {
+type UserTokenClaims struct {
 	ID       int64
 	Username string
 	jwt.StandardClaims
@@ -15,7 +15,7 @@ func GenerateToken() (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(300 * time.Second)
 	issuer := "frank"
-	claims := MyCustomClaims{
+	claims := UserTokenClaims{
 		ID:       10001,
 		Username: "frank",
 		StandardClaims: jwt.StandardClaims{
@@ -27,8 +27,8 @@ func GenerateToken() (string, error) {
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte("golang"))
 	return token, err
 }
-func ParseToken(token string) (*MyCustomClaims, error) {
-	tokenClaims, err := jwt.ParseWithClaims(token, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(token string) (*UserTokenClaims, error) {
+	tokenClaims, err := jwt.ParseWithClaims(token, &UserTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte("golang"), nil
 	})
 	if err != nil {
@@ -36,7 +36,7 @@ func ParseToken(token string) (*MyCustomClaims, error) {
 	}
 
 	if tokenClaims != nil {
-		if claims, ok := tokenClaims.Claims.(*MyCustomClaims); ok && tokenClaims.Valid {
+		if claims, ok := tokenClaims.Claims.(*UserTokenClaims); ok && tokenClaims.Valid {
 			return claims, nil
 		}
 	}

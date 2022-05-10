@@ -1,7 +1,6 @@
 package db
 
 import (
-	. "douyin/src/db"
 	"log"
 	"testing"
 )

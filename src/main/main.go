@@ -10,7 +10,7 @@ import (
 
 func newApp() *iris.Application {
 	app := iris.New()
-	//app.OnErrorCode(iris.StatusNotFound, notFound)
+	app.OnErrorCode(iris.StatusNotFound, notFound)
 	mvc.Configure(app.Party("/douyin/user"), func(app *mvc.Application) {
 		app.Handle(new(UserController))
 	})
@@ -22,11 +22,11 @@ func main() {
 	app.Run(iris.Addr(":"+addr), iris.WithCharset("UTF-8"))
 }
 
-//func notFound(ctx iris.Context) {
-//	code := ctx.GetStatusCode()
-//	msg := "404 Not Found"
-//	ctx.JSON(iris.Map{
-//		"Message": msg,
-//		"Code":    code,
-//	})
-//}
+func notFound(ctx iris.Context) {
+	code := ctx.GetStatusCode()
+	msg := "404 Not Found"
+	ctx.JSON(iris.Map{
+		"Message": msg,
+		"Code":    code,
+	})
+}

@@ -26,7 +26,7 @@ func newApp() *iris.Application {
 	mvc.Configure(app.Party("/douyin/relation"), func(app *mvc.Application) {
 		app.Handle(new(RelationController))
 	})
-	mvc.Configure(app.Party("/feed"), func(app *mvc.Application) {
+	mvc.Configure(app.Party("/douyin/feed"), func(app *mvc.Application) {
 		app.Handle(new(FeedController))
 	})
 	return app

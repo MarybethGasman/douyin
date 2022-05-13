@@ -1,0 +1,3 @@
+diff a/.gitignore b/.gitignore	(rejected hunks)
+@@ -0,0 +1 @@
++/.idea

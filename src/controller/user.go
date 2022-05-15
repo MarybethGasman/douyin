@@ -4,6 +4,7 @@ import (
 	"douyin/src/cache"
 	. "douyin/src/db"
 	"douyin/src/utils"
+	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"time"
@@ -12,6 +13,7 @@ import (
 type User struct {
 	Id            int64  `json:"id,omitempty"`
 	Name          string `json:"name,omitempty"`
+	Password      string `json:"password,omitempty"`
 	FollowCount   int64  `json:"follow_count,omitempty"`
 	FollowerCount int64  `json:"follower_count,omitempty"`
 	IsFollow      bool   `json:"is_follow,omitempty"`
@@ -69,6 +71,7 @@ func (uc *UserController) PostRegister(ctx iris.Context) mvc.Result {
 func (uc *UserController) PostLogin(ctx iris.Context) mvc.Result {
 	var username = ctx.URLParam("username")
 	var password = ctx.URLParam("password")
+	fmt.Println(username, password)
 
 	rows := DB.QueryRow(
 		"select user_id,password from tb_user where name = ?",

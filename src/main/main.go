@@ -11,6 +11,7 @@ import (
 func newApp() *iris.Application {
 	app := iris.New()
 	app.OnErrorCode(iris.StatusNotFound, notFound)
+
 	mvc.Configure(app.Party("/douyin/user"), func(app *mvc.Application) {
 		app.Handle(new(UserController))
 	})
@@ -26,7 +27,7 @@ func newApp() *iris.Application {
 	mvc.Configure(app.Party("/douyin/relation"), func(app *mvc.Application) {
 		app.Handle(new(RelationController))
 	})
-	mvc.Configure(app.Party("/feed"), func(app *mvc.Application) {
+	mvc.Configure(app.Party("/douyin/feed"), func(app *mvc.Application) {
 		app.Handle(new(FeedController))
 	})
 	return app
@@ -36,7 +37,7 @@ func main() {
 	addr := strconv.Itoa(AppConfig.Get("server.port").(int))
 	app := newApp()
 	app.UseGlobal(before)
-	app.Run(iris.Addr(":"+addr), iris.WithCharset("UTF-8"))
+	app.Run(iris.Addr(":"+addr), iris.WithCharset("UTF-8"), iris.WithoutPathCorrectionRedirection)
 }
 
 func before(ctx iris.Context) {

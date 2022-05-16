@@ -4,7 +4,6 @@ import (
 	"douyin/src/cache"
 	. "douyin/src/db"
 	"douyin/src/utils"
-	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"time"
@@ -13,7 +12,6 @@ import (
 type User struct {
 	Id            int64  `json:"id,omitempty"`
 	Name          string `json:"name,omitempty"`
-	Password      string `json:"password,omitempty"`
 	FollowCount   int64  `json:"follow_count,omitempty"`
 	FollowerCount int64  `json:"follower_count,omitempty"`
 	IsFollow      bool   `json:"is_follow,omitempty"`
@@ -71,7 +69,6 @@ func (uc *UserController) PostRegister(ctx iris.Context) mvc.Result {
 func (uc *UserController) PostLogin(ctx iris.Context) mvc.Result {
 	var username = ctx.URLParam("username")
 	var password = ctx.URLParam("password")
-	fmt.Println(username, password)
 
 	rows := DB.QueryRow(
 		"select user_id,password from tb_user where name = ?",
@@ -98,4 +95,34 @@ func (uc *UserController) PostLogin(ctx iris.Context) mvc.Result {
 			},
 		}
 	}
+}
+
+type UserResponse struct {
+	Response
+	User User `json:"user"`
+}
+
+var user User = User{
+	Id:            1,
+	Name:          "liry",
+	FollowCount:   100,
+	FollowerCount: 500,
+	IsFollow:      true,
+}
+
+//用户信息接口
+func (uc *UserController) Get(ctx iris.Context) mvc.Response {
+	//fmt.Println(ctx.URLParams())
+	//user_id := ctx.URLParam("user_id")
+	return mvc.Response{
+		Object: UserResponse{
+			Response: Response{StatusCode: 0},
+			User:     user,
+		},
+	}
+}
+
+func (uc *UserController) BeforeActivation(a mvc.BeforeActivation) {
+	a.Handle("POST", "/login/", "PostLogin")
+	a.Handle("POST", "/register/", "PostRegister")
 }

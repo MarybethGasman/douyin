@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"douyin/src/cache"
 	db2 "douyin/src/db"
+	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"log"
@@ -63,17 +65,23 @@ func (cc *CommentController) GetList(ctx iris.Context) mvc.Result {
 		}
 	}
 	//fmt.Println(token, video_id, user_id)
-	sql := "select comment_id,comment_user_id,comment_content,comment_latest_time,user_name from comment left join user on comment_user_id=user_id and comment_video_id=? order by comment_latest_time desc;"
+	sql := "select comment_id,tb_comment.user_id,content,create_time,name from tb_comment left join tb_user on tb_comment.user_id=tb_user.user_id and video_id=? order by create_time desc;"
 	rows, err := sqlSession.Query(sql, video_id)
 	if err != nil {
 		panic(err)
 	}
+	//延时资源关闭
+	defer rows.Close()
+
 	var commentList []Comment = make([]Comment, 0)
 	var comment Comment
 	for rows.Next() {
 		//这里是查询video_id视频的所有评论，然后查询出来的全部封装到comment类中，再封装到CommentListResponse中返回到前端
 		rows.Scan(&comment.Id, &comment.User.Id, &comment.Content, &comment.CreateDate, &comment.User.Name)
 		commentList = append(commentList, comment)
+	}
+	if rows.Err() != nil {
+		log.Fatal(rows.Err())
 	}
 
 	return mvc.Response{
@@ -89,22 +97,33 @@ func (cc *CommentController) GetList(ctx iris.Context) mvc.Result {
 func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 	var actionRequest CommentActionRequest
 	//若前端传过来的是一个json格式字符串的话下面方法可以获取并封装成一个actionRequest对象
-	err := ctx.ReadJSON(&actionRequest)
-	if err != nil {
-		log.Fatal(err)
-		return mvc.Response{Object: Response{StatusCode: 1, StatusMsg: "请求失败!!!"}}
-	}
+	//err := ctx.ReadJSON(&actionRequest)
+	//if err != nil {
+	//	log.Fatal(err)
+	//	return mvc.Response{Object: Response{StatusCode: 1, StatusMsg: "请求失败!!!"}}
+	//}
+
+	fmt.Println(ctx.URLParams())
+
+	//actionRequest.UserId, _ = ctx.URLParamInt64("user_id")
+	actionRequest.Token = ctx.URLParam("token")
+	actionRequest.VideoId, _ = ctx.URLParamInt64("video_id")
+	actionRequest.ActionType, _ = ctx.URLParamInt64("action_type")
+	actionRequest.CommentText = ctx.URLParam("comment_text")
+	actionRequest.CommentId, _ = ctx.URLParamInt64("comment_id")
+	actionRequest.UserId, _ = cache.RCGet(actionRequest.Token).Int64()
+
 	if actionRequest.ActionType == 1 {
 		//发布评论
-		sql := "insert into comment values(?,?,?,?,?,?)"
-		_, err := sqlSession.Exec(sql, nil, actionRequest.UserId, actionRequest.VideoId, actionRequest.CommentText, time.Now().Format("2006-01-02 15:04:05"), nil)
+		sql := "insert into tb_comment values(?,?,?,?,?)"
+		_, err := sqlSession.Exec(sql, nil, actionRequest.UserId, actionRequest.VideoId, actionRequest.CommentText, time.Now().Format("2006-01-02 15:04:05"))
 		if err != nil {
 			return mvc.Response{Object: Response{StatusCode: 1, StatusMsg: "发表失败!!!"}}
 		}
 	} else {
-		//删除评论
-		sql := "delete from comment where comment_id=?"
-		_, err := sqlSession.Exec(sql, actionRequest.CommentId)
+		//删除评论,得保证是本人删除，也就是删除的是当前用户的评论
+		sql := "delete from tb_comment where comment_id=? and user_id=?"
+		_, err := sqlSession.Exec(sql, actionRequest.CommentId, actionRequest.UserId)
 		if err != nil {
 			return mvc.Response{
 				Object: Response{StatusCode: 1, StatusMsg: "删除失败,请重试!!!"},

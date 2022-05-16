@@ -22,4 +22,8 @@ func init() {
 		panic("数据库连接错误")
 	}
 	DB = db
+	//设置数据库连接池大小
+	DB.SetMaxOpenConns(2000)
+	DB.SetMaxIdleConns(1000)
+	DB.Ping()
 }

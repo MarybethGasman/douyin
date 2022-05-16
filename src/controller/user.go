@@ -2,12 +2,17 @@ package controller
 
 import (
 	"douyin/src/cache"
-	. "douyin/src/db"
+	"douyin/src/db"
 	"douyin/src/utils"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"time"
 )
+
+type UserResponse struct {
+	Response
+	User User `json:"user"`
+}
 
 type User struct {
 	Id            int64  `json:"id,omitempty"`
@@ -31,11 +36,24 @@ type Response struct {
 type UserController struct {
 }
 
+func (uc *UserController) Get(ctx iris.Context) mvc.Result {
+	ctx.JSON(UserResponse{
+		Response: Response{StatusCode: 0},
+		User: User{
+			Id:            1,
+			Name:          "zhanglei",
+			FollowCount:   10,
+			FollowerCount: 5,
+			IsFollow:      true},
+	})
+	return nil
+}
+
 func (uc *UserController) PostRegister(ctx iris.Context) mvc.Result {
 	var username = ctx.URLParam("username")
 
 	userId := 0
-	row := DB.QueryRow("select user_id from tb_user where name = ?", username)
+	row := db.DB.QueryRow("select user_id from tb_user where name = ?", username)
 	row.Scan(&userId)
 	if userId > 0 {
 		return mvc.Response{
@@ -46,7 +64,7 @@ func (uc *UserController) PostRegister(ctx iris.Context) mvc.Result {
 
 	//password = utils.MD5(password)
 
-	result, err := DB.Exec(
+	result, err := db.DB.Exec(
 		"insert into tb_user(name,password) values(?,?)",
 		username, password)
 	if err != nil {
@@ -70,7 +88,7 @@ func (uc *UserController) PostLogin(ctx iris.Context) mvc.Result {
 	var username = ctx.URLParam("username")
 	var password = ctx.URLParam("password")
 
-	rows := DB.QueryRow(
+	rows := db.DB.QueryRow(
 		"select user_id,password from tb_user where name = ?",
 		username)
 

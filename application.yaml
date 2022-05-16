@@ -2,8 +2,8 @@ datasource:
   driverName: mysql
   dataSourceName: tainanle:123456@tcp(127.0.0.1:3306)/db10
 redis:
-  host: localhost
+  host: 192.168.17.131
   port: 6379
-  password:
+  password: 123456
 server:
   port: 8080

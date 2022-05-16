@@ -8,7 +8,6 @@ import (
 )
 
 func TestRedisClient(t *testing.T) {
-
 	t.Log(RCExists("ebba034e09d79a50692371d0070e61e"))
 
 }

@@ -96,3 +96,30 @@ func (uc *UserController) PostLogin(ctx iris.Context) mvc.Result {
 		}
 	}
 }
+
+type UserResponse struct {
+	Response
+	User User `json:"user"`
+}
+
+var user User = User{
+	Id:            1,
+	Name:          "liry",
+	FollowCount:   100,
+	FollowerCount: 500,
+	IsFollow:      true,
+}
+
+func (uc *UserController) Get(ctx iris.Context) mvc.Response {
+	return mvc.Response{
+		Object: UserResponse{
+			Response: Response{StatusCode: 0},
+			User:     user,
+		},
+	}
+}
+
+func (uc *UserController) BeforeActivation(a mvc.BeforeActivation) {
+	a.Handle("POST", "/login/", "PostLogin")
+	a.Handle("POST", "/register/", "PostRegister")
+}

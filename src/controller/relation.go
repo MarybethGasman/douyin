@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
+	"os"
 	"time"
 )
 
@@ -31,8 +32,8 @@ type RelationController struct {
 }
 
 func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
-	token := context.Params().Get("token")
-	if !cache.RCExists(token) {
+	token := context.Params().GetString("token")
+	if "" == token && !cache.RCExists(token) {
 		return mvc.Response{
 			Object: actionResponse{
 				StatusCode: 400,
@@ -91,6 +92,32 @@ func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
 	}
 }
 
-func (rc *RelationController) GetList() mvc.Result {
-
+func (rc *RelationController) GetList(context iris.Context) mvc.Result {
+	userid, _ := context.Params().GetInt("user_id")
+	token := context.Params().GetString("token")
+	if token == "" && cache.RCExists(token) {
+		return mvc.Response{
+			Object: listResponse{
+				StatusCode: "100",
+				StatusMsg:  "登录超时",
+			},
+		}
+	}
+	rows, _ := db.DB.Query("select * from `tb_relation` where `following_id`=?", userid)
+	user_list := make([]User, 5, 50)
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.Id, &user.Name, &user.FollowerCount, &user.FollowerCount, &user.IsFollow)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v", err)
+		}
+		user_list = append(user_list, user)
+	}
+	return mvc.Response{
+		Object: listResponse{
+			StatusCode: "0",
+			StatusMsg:  "",
+			UserList:   user_list,
+		},
+	}
 }

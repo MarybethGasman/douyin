@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	filePath = "upload/"
+	FilePath = "upload/"
 )
 
 // Contribution 视频投稿
@@ -38,8 +38,8 @@ func Contribution(ctx iris.Context) {
 	}
 	defer file.Close()
 
-	if b, _ := isHasDir(filePath); !b {
-		err = os.MkdirAll(filePath, 0777)
+	if b, _ := isHasDir(FilePath); !b {
+		err = os.MkdirAll(FilePath, 0777)
 		if err != nil {
 			ctx.JSON(map[string]interface{}{
 				"status_code": 5,
@@ -49,7 +49,7 @@ func Contribution(ctx iris.Context) {
 		}
 	}
 
-	fw, err := os.Create(filePath + head.Filename)
+	fw, err := os.Create(FilePath + head.Filename)
 
 	if err != nil {
 		ctx.JSON(map[string]interface{}{

@@ -34,5 +34,5 @@ func (fc *FeedController) GetFeedVideo(b iris.Context) {
 	ss = ss[:len(ss)-1]
 	path = strings.Join(ss, "\\") + "\\"
 
-	b.SendFile(path+"upload/"+videoName, videoName)
+	b.SendFile(path+service.FilePath+videoName, videoName)
 }

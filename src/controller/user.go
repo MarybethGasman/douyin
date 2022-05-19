@@ -1,125 +1,75 @@
 package controller
 
 import (
-	"douyin/src/cache"
-	. "douyin/src/db"
-	"douyin/src/utils"
+	"douyin/src/common"
+	userService "douyin/src/service"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
-	"time"
 )
-
-type User struct {
-	Id            int64  `json:"id,omitempty"`
-	Name          string `json:"name,omitempty"`
-	FollowCount   int64  `json:"follow_count,omitempty"`
-	FollowerCount int64  `json:"follower_count,omitempty"`
-	IsFollow      bool   `json:"is_follow,omitempty"`
-}
-
-type UserLoginResponse struct {
-	Response
-	UserId int64  `json:"user_id,omitempty"`
-	Token  string `json:"token"`
-}
-
-type Response struct {
-	StatusCode int32  `json:"status_code"`
-	StatusMsg  string `json:"status_msg,omitempty"`
-}
 
 type UserController struct {
 }
+type UserResponse struct {
+	common.Response
+	User userService.User `json:"user"`
+}
 
 func (uc *UserController) PostRegister(ctx iris.Context) mvc.Result {
+	//参数接受校验
 	var username = ctx.URLParam("username")
-
-	userId := 0
-	row := DB.QueryRow("select user_id from tb_user where name = ?", username)
-	row.Scan(&userId)
-	if userId > 0 {
+	var password = ctx.URLParam("password")
+	if username == "" || password == "" {
 		return mvc.Response{
-			Object: Response{1, "User already exist"},
+			Object: userService.UserLoginAndRegisterResponse{
+				Response: common.Response{StatusCode: 1, StatusMsg: "参数不能为空"},
+			},
 		}
 	}
-	var password = ctx.URLParam("password")
-
 	//password = utils.MD5(password)
-
-	result, err := DB.Exec(
-		"insert into tb_user(name,password) values(?,?)",
-		username, password)
-	if err != nil {
-		panic("新增数据错误")
-	}
-	newID, _ := result.LastInsertId() //新增数据的ID
-
-	token := utils.MD5WithSalt(username)
-	cache.RCSet(token, newID, 30*time.Minute)
+	var response = userService.Register(username, password)
 
 	return mvc.Response{
-		Object: UserLoginResponse{
-			Response: Response{StatusCode: 0},
-			UserId:   newID,
-			Token:    token,
-		},
+		Object: response,
 	}
 }
 
-func (uc *UserController) PostLogin(ctx iris.Context) mvc.Result {
+func (uc *UserController) PostLogin(ctx iris.Context) mvc.Response {
+	//参数获取与校验
 	var username = ctx.URLParam("username")
 	var password = ctx.URLParam("password")
-
-	rows := DB.QueryRow(
-		"select user_id,password from tb_user where name = ?",
-		username)
-
-	var passwordFormDB string
-	var userId int64
-	rows.Scan(&userId, &passwordFormDB)
-	token := utils.MD5WithSalt(username)
-	cache.RCSet(token, userId, 30*time.Minute)
-
-	if passwordFormDB == password {
+	if username == "" || password == "" {
 		return mvc.Response{
-			Object: UserLoginResponse{
-				Response: Response{StatusCode: 0},
-				UserId:   userId,
-				Token:    token,
-			},
-		}
-	} else {
-		return mvc.Response{
-			Object: UserLoginResponse{
-				Response: Response{StatusCode: 1, StatusMsg: "用户名或密码错误"},
+			Object: userService.UserLoginAndRegisterResponse{
+				Response: common.Response{StatusCode: 1, StatusMsg: "参数不能为空"},
 			},
 		}
 	}
-}
+	response := userService.Login(username, password)
 
-type UserResponse struct {
-	Response
-	User User `json:"user"`
-}
-
-var user User = User{
-	Id:            1,
-	Name:          "liry",
-	FollowCount:   100,
-	FollowerCount: 500,
-	IsFollow:      true,
+	return mvc.Response{
+		Object: response,
+	}
 }
 
 func (uc *UserController) Get(ctx iris.Context) mvc.Response {
+	var userId int64 = ctx.URLParamInt64Default("user_id", -1)
+	if userId == -1 {
+		return mvc.Response{
+			Object: userService.UserLoginAndRegisterResponse{
+				Response: common.Response{StatusCode: 1, StatusMsg: "参数不能为空"},
+			},
+		}
+	}
+	user := userService.Info(userId)
 	return mvc.Response{
 		Object: UserResponse{
-			Response: Response{StatusCode: 0},
+			Response: common.Response{StatusCode: 0},
 			User:     user,
 		},
 	}
 }
 
-func (uc *UserController) BeforeActivation(a mvc.BeforeActivation) {
-	a.Handle("POST", "/login/", "PostLogin")
-	a.Handle("POST", "/register/", "PostRegister")
-}
+//func (uc *UserController) BeforeActivation(a mvc.BeforeActivation) {
+//	a.Handle("POST", "/login/", "PostLogin")
+//	a.Handle("POST", "/register/", "PostRegister")
+//}

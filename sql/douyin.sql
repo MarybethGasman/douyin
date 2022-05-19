@@ -1,6 +1,6 @@
--- MySQL dump 10.13  Distrib 8.0.28, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
 --
--- Host: localhost    Database: douyin
+-- Host: localhost    Database: db10
 -- ------------------------------------------------------
 -- Server version	8.0.28
 
@@ -32,15 +32,6 @@ CREATE TABLE `tb_comment` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `tb_comment`
---
-
-LOCK TABLES `tb_comment` WRITE;
-/*!40000 ALTER TABLE `tb_comment` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tb_comment` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `tb_favorite`
 --
 
@@ -55,15 +46,6 @@ CREATE TABLE `tb_favorite` (
   PRIMARY KEY (`favorite_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tb_favorite`
---
-
-LOCK TABLES `tb_favorite` WRITE;
-/*!40000 ALTER TABLE `tb_favorite` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tb_favorite` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `tb_relation`
@@ -82,15 +64,6 @@ CREATE TABLE `tb_relation` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `tb_relation`
---
-
-LOCK TABLES `tb_relation` WRITE;
-/*!40000 ALTER TABLE `tb_relation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tb_relation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `tb_user`
 --
 
@@ -105,18 +78,8 @@ CREATE TABLE `tb_user` (
   `is_follow` tinyint DEFAULT '0',
   `password` char(40) DEFAULT '',
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tb_user`
---
-
-LOCK TABLES `tb_user` WRITE;
-/*!40000 ALTER TABLE `tb_user` DISABLE KEYS */;
-INSERT INTO `tb_user` VALUES (1,'tanmeng',0,0,0,'123'),(2,'liry',0,0,0,'123');
-/*!40000 ALTER TABLE `tb_user` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `tb_video`
@@ -132,18 +95,11 @@ CREATE TABLE `tb_video` (
   `cover_url` varchar(60) DEFAULT '',
   `favorite_count` int DEFAULT '0',
   `comment_count` int DEFAULT '0',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`video_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tb_video`
---
-
-LOCK TABLES `tb_video` WRITE;
-/*!40000 ALTER TABLE `tb_video` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tb_video` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -154,4 +110,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-13 12:21:22
+-- Dump completed on 2022-05-16 23:06:26

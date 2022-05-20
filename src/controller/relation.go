@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"douyin/src/cache"
 	"douyin/src/db"
-	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
-	"os"
+	"log"
+	"strconv"
 	"time"
 )
 
@@ -19,7 +19,7 @@ type actionResponse struct {
 type listResponse struct {
 	StatusCode string `json:"status_code"`
 	StatusMsg  string `json:"status_msg"`
-	UserList   []User `json:"user_list"`
+	UserList   []User `json:"user_list,omitempty"`
 }
 
 type Relation struct {
@@ -32,7 +32,7 @@ type RelationController struct {
 }
 
 func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
-	token := context.Params().GetString("token")
+	token := context.FormValue("token")
 	if "" == token && !cache.RCExists(token) {
 		return mvc.Response{
 			Object: actionResponse{
@@ -41,13 +41,14 @@ func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
 			},
 		}
 	}
-	userid, _ := context.Params().GetInt("user_id")
-	touserid, _ := context.Params().GetInt("to_user_id")
-	actiontype, _ := context.Params().GetInt("action_type")
+	userid := context.FormValue("user_id")
+	touserid := context.FormValue("to_user_id")
+	actiontype, _ := strconv.Atoi(context.FormValue("action_type"))
 	cache.RCSet(token, userid, time.Minute*30) //更新用户token
-	rows, err := db.DB.Query("select `follower_id`,`following_id` from `tb_relation`")
+
+	rows, err := db.DB.Query("select `follower_id`,`following_id` from `tb_relation` where  `follower_id`=? and `following_id`=?", userid, touserid)
 	if err != nil {
-		fmt.Errorf("查询关注列表错误")
+		log.Println("查询关注列表错误")
 		return mvc.Response{
 			Object: actionResponse{
 				StatusCode: 500,
@@ -56,14 +57,25 @@ func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
 		}
 	}
 	defer rows.Close() //在执行完后关闭游标
+
+	//开启事务
+	tx, _ := db.DB.Begin()
 	var result sql.Result
-	if rows == nil {
-		result, err = db.DB.Exec("insert into `tb_relation`(`follower_id`,`following_id`,`isdeleted`) "+
-			"values(?,?,?)", userid, touserid, actiontype-1)
+	if !rows.Next() {
+		result, _ = db.DB.Exec("insert into `tb_relation`(`follower_id`,`following_id`,`isdeleted`) "+
+			"values(?,?,?)", userid, touserid, (actiontype+1)%2) // 2对应true执行关注操作(删除) 1对应true执行取消关注操作（不删除）
 	} else {
-		result, err = db.DB.Exec("update `tb_relation` set isdeleted=? where `follower_id`=? "+
-			"and `following_id`=?", actiontype-1, userid, touserid)
+		result, _ = db.DB.Exec("update `tb_relation` set isdeleted=? where `follower_id`=? "+
+			"and `following_id`=?", (actiontype+1)%2, userid, touserid)
 	}
+	if actiontype == 1 {
+		db.DB.Exec("update `tb_user` set `follow_count`=`follow_count`+1 where `user_id`=?", touserid)   //粉丝数+1
+		db.DB.Exec("update `tb_user` set `follower_count`=`follower_count`+1 where `user_id`=?", userid) //关注数+1
+	} else {
+		db.DB.Exec("update `tb_user` set `follow_count`=`follow_count`-1 where `user_id`=?", touserid)   //粉丝数-1
+		db.DB.Exec("update `tb_user` set `follower_count`=`follower_count`-1 where `user_id`=?", userid) //关注数-1
+	}
+	tx.Commit() //提交事务
 	ar, _ := result.RowsAffected()
 	var stm string
 	switch actiontype {
@@ -76,6 +88,7 @@ func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
 			stm = "取消关注"
 		}
 	}
+	log.Println("用户：" + userid + "执行了" + stm + "操作")
 	if ar != 0 {
 		return mvc.Response{
 			Object: actionResponse{
@@ -93,9 +106,9 @@ func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
 }
 
 func (rc *RelationController) GetList(context iris.Context) mvc.Result {
-	userid, _ := context.Params().GetInt("user_id")
-	token := context.Params().GetString("token")
-	if token == "" && cache.RCExists(token) {
+	userid := context.FormValue("user_id")
+	token := context.FormValue("token")
+	if token == "" || !cache.RCExists(token) {
 		return mvc.Response{
 			Object: listResponse{
 				StatusCode: "100",
@@ -103,20 +116,30 @@ func (rc *RelationController) GetList(context iris.Context) mvc.Result {
 			},
 		}
 	}
-	rows, _ := db.DB.Query("select * from `tb_relation` where `following_id`=?", userid)
-	user_list := make([]User, 5, 50)
+	log.Println(token)
+	rows, err := db.DB.Query("select `follower_id` from `tb_relation` where `follower_id`=? and `isdeleted`=false", userid)
+	if err != nil {
+		log.Printf("查询关注列表错误:%v\n", err)
+	}
+	user_list := make([]User, 0, 50)
 	for rows.Next() {
 		var user User
-		err := rows.Scan(&user.Id, &user.Name, &user.FollowerCount, &user.FollowerCount, &user.IsFollow)
+		var id int
+		err := rows.Scan(&id)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%v", err)
+			log.Printf("%v", err)
 		}
+		//获取关注用户信息
+		row := db.DB.QueryRow("select `user_id`,`name`,`follow_count`,`follower_count` from `tb_user` where `user_id`=?", id)
+		row.Scan(&user.Id, &user.Name, &user.FollowerCount, &user.FollowCount)
+		user.IsFollow = true
 		user_list = append(user_list, user)
 	}
+	defer rows.Close()
 	return mvc.Response{
 		Object: listResponse{
 			StatusCode: "0",
-			StatusMsg:  "",
+			StatusMsg:  "请求完成",
 			UserList:   user_list,
 		},
 	}

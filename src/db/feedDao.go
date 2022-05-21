@@ -12,7 +12,7 @@ import (
 
 var (
 	db  = NewDB()
-	dns = config.AppConfig.Get("datasource.dataSourceName").(string) + "?parseTime=true" //gorm框架 连接mysql
+	dns = config.AppConfig.GetString("datasource.dataSourceName") + "?parseTime=true" //gorm框架 连接mysql
 )
 
 type FeedDao struct {

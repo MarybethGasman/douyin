@@ -1,10 +1,11 @@
-package user_service
+package service
 
 import (
 	. "douyin/src/common"
-	. "douyin/src/dao"
 	"douyin/src/utils"
 	"time"
+	."douyin/src/db"
+	."douyin/src/cache"
 )
 
 type UserLoginAndRegisterResponse struct {

@@ -1,8 +1,9 @@
-package user_service
+package service
 
 import (
+	. "douyin/src/cache"
 	. "douyin/src/common"
-	. "douyin/src/dao"
+	. "douyin/src/db"
 	"douyin/src/utils"
 	"time"
 )
@@ -19,8 +20,8 @@ func Register(username string, password string) UserLoginAndRegisterResponse {
 	userInDB.Name = username
 	row := DB.QueryRow("select user_id from tb_user where name = ?", username)
 	row.Scan(&userInDB.Id)
-	userInDB.password = password
-	if userInDB.exists() {
+	userInDB.Password = password
+	if userInDB.Exists() {
 		return UserLoginAndRegisterResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
 		}
@@ -28,7 +29,7 @@ func Register(username string, password string) UserLoginAndRegisterResponse {
 		//更新数据
 		result, err := DB.Exec(
 			"insert into tb_user(name,password) values(?,?)",
-			userInDB.Name, userInDB.password)
+			userInDB.Name, userInDB.Password)
 		if err != nil {
 			panic("新增数据错误")
 		}
@@ -54,9 +55,9 @@ func Login(username string, password string) UserLoginAndRegisterResponse {
 		"select user_id,name,password from tb_user where name = ?",
 		username)
 	var userFormDB = User{}
-	rows.Scan(&userFormDB.Id, &userFormDB.Name, &userFormDB.password)
+	rows.Scan(&userFormDB.Id, &userFormDB.Name, &userFormDB.Password)
 
-	if userFormDB.isCorrect(password) {
+	if userFormDB.IsCorrect(password) {
 		token := utils.MD5WithSalt(username)
 		RCSet(token, userFormDB.Id, 30*time.Minute)
 		return UserLoginAndRegisterResponse{
@@ -80,22 +81,16 @@ func Info(userId int64) User {
 	return user
 }
 
-type User struct {
-	Id            int64  `json:"id,omitempty"`
-	Name          string `json:"name,omitempty"`
-	FollowCount   int64  `json:"follow_count,omitempty"`
-	FollowerCount int64  `json:"follower_count,omitempty"`
-	IsFollow      bool   `json:"is_follow,omitempty"`
-	password      string
-}
+//type User struct {
+//	Id            int64  `json:"id,omitempty"`
+//	Name          string `json:"name,omitempty"`
+//	FollowCount   int64  `json:"follow_count,omitempty"`
+//	FollowerCount int64  `json:"follower_count,omitempty"`
+//	IsFollow      bool   `json:"is_follow,omitempty"`
+//	password      string
+//}
 
-func (user *User) isCorrect(password string) bool {
-	return user.password == password
-}
-func (user *User) exists() bool {
-	return user.Id > 0
-}
-func (user *User) equals(user2 User) bool {
-	return user.Name == user2.Name &&
-		user.password == user2.password
-}
+//func (user *User) equals(user2 User) bool {
+//	return user.Name == user2.Name &&
+//		user.password == user2.password
+//}

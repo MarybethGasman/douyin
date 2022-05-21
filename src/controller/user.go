@@ -11,7 +11,7 @@ type UserController struct {
 }
 type UserResponse struct {
 	common.Response
-	User userService.User `json:"user"`
+	User common.User `json:"user"`
 }
 
 func (uc *UserController) PostRegister(ctx iris.Context) mvc.Result {

@@ -1,13 +1,14 @@
 package service
 
 import (
+	"douyin/src/config"
 	"douyin/src/db"
 	"time"
 )
 
-const (
-	videoUrl = "http://10.196.62.4:8080/douyin/feed/video/"      // 哪个服务器存放着视频的目录
-	imageUrl = "https://cdn.pixabay.com/photo/2016/03/27/18/10/" // 哪个服务器存放着视频封面的目录
+var (
+	videoUrl = config.AppConfig.GetString("video.videoUrl")
+	imageUrl = config.AppConfig.GetString("video.imageUrl")
 )
 
 type FeedData struct {
@@ -54,8 +55,7 @@ func GetFeed(latestTime string, token string) *FeedData {
 			CoverUrl:      "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg",
 			FavoriteCount: 0,
 			CommentCount:  0,
-			//TODO 这块需要一个判断是否点赞
-			IsFavorite: false,
+			IsFavorite:    false,
 		})
 	}
 

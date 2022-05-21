@@ -1,6 +1,7 @@
 package db
 
 import (
+	"douyin/src/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -11,7 +12,7 @@ import (
 
 var (
 	db  = NewDB()
-	dns = "tainanle:123456@tcp(127.0.0.1:3306)/db10?parseTime=true" //gorm框架 连接mysql
+	dns = config.AppConfig.Get("datasource.dataSourceName").(string) + "?parseTime=true" //gorm框架 连接mysql
 )
 
 type FeedDao struct {

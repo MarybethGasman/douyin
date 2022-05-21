@@ -151,8 +151,7 @@ func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 		if rows.Next() {
 			rows.Scan(&count)
 		}
-		sql1 := "update tb_video set comment_count=? where video_id=?"
-		sqlSession.Exec(sql1, count)
+		sqlSession.Exec("update tb_video set comment_count=? where video_id=?", count)
 	}
 	return mvc.Response{
 		Object: Response{StatusCode: 0, StatusMsg: "操作成功!!!"},

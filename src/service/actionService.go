@@ -2,14 +2,15 @@ package service
 
 import (
 	"douyin/src/cache"
+	"douyin/src/config"
 	"douyin/src/db"
 	"github.com/kataras/iris/v12"
 	"io"
 	"os"
 )
 
-const (
-	FilePath = "upload/"
+var (
+	FilePath = config.AppConfig.GetString("video.filePath")
 )
 
 // Contribution 视频投稿

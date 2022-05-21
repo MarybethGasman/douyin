@@ -33,10 +33,10 @@ func newApp() *iris.Application {
 }
 
 func main() {
-	addr := strconv.Itoa(AppConfig.Get("server.port").(int))
+	addr := strconv.Itoa(AppConfig.GetInt("server.port"))
 	app := newApp()
 	app.UseGlobal(before)
-	app.Run(iris.Addr(":"+addr), iris.WithCharset("UTF-8"))
+	app.Run(iris.Addr(":"+addr), iris.WithCharset("UTF-8"), iris.WithoutPathCorrectionRedirection)
 }
 
 func before(ctx iris.Context) {

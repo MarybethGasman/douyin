@@ -3,6 +3,7 @@ package controller
 import (
 	"database/sql"
 	"douyin/src/cache"
+	. "douyin/src/common"
 	"douyin/src/db"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"

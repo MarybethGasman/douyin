@@ -11,7 +11,7 @@ import (
 
 var (
 	db  = NewDB()
-	dns = "tainanle:123456@tcp(127.0.0.1:3306)/db10?parseTime=true" //gorm框架 连接mysql
+	dns = "root:tanm146@tcp(127.0.0.1:3306)/douyin?parseTime=true" //gorm框架 连接mysql
 )
 
 type FeedDao struct {

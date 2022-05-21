@@ -2,6 +2,7 @@ package controller
 
 import (
 	"douyin/src/cache"
+	. "douyin/src/common"
 	db2 "douyin/src/db"
 	"fmt"
 	"github.com/kataras/iris/v12"

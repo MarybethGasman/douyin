@@ -3,7 +3,6 @@ package service
 import (
 	. "douyin/src/common"
 	db2 "douyin/src/db"
-	"log"
 )
 
 const TableNameFavorite = "tb_favorite"
@@ -33,8 +32,7 @@ func GetVideoListsById(id string) []VideoList2 {
 	n := result.RowsAffected
 	videoS := make([]VideoList2, n)
 
-	log.Println("4号")
-
+	//给一条数据给他，要不然会崩溃
 	if n == 0 {
 		var vil VideoList2
 		vil.Id = 4
@@ -74,6 +72,5 @@ func GetVideoListsById(id string) []VideoList2 {
 		}
 		videoS[i].Title = "数据库没有这个字段"
 	}
-	log.Println("5号")
 	return videoS
 }

@@ -42,18 +42,15 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 	//获取视频列表
 	videoLists := service.GetVideoListsById(userId)
 
-	log.Println("1浩")
+	//不知道为什么videoLists不能为空，等我解决吧
 	_, err := ctx.JSON(VideoListResponse{
 		StatusCode: 0,
 		StatusMsg:  "成功",
 		VideoLists: videoLists,
 	})
-	log.Println("2号")
-	log.Println(videoLists)
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Println("3号")
 }
 
 func (pc *PublishController) PostAction(ctx iris.Context) {

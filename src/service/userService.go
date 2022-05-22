@@ -75,7 +75,7 @@ func Login(username string, password string) UserLoginAndRegisterResponse {
 func Info(userId int64) User {
 	var user User
 	row := DB.QueryRow(
-		"select user_id,naame,follow_count,follower_count,is_follow where user_id = ?", userId)
+		"select user_id,name,follow_count,follower_count,is_follow where user_id = ?", userId)
 	row.Scan(&user.Id, &user.Name, &user.FollowCount, &user.FollowerCount, &user.IsFollow)
 
 	return user

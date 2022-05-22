@@ -11,7 +11,7 @@ import (
 
 var (
 	db  = NewDB()
-	dns = "root:123123@tcp(127.0.0.1:3306)/douyin?parseTime=true" //gorm框架 连接mysql
+	dns = "root:Ling@tcp(127.0.0.1:3306)/douying?charset=utf8&interpolateParams=true" //gorm框架 连接mysql
 )
 
 type FeedDao struct {

@@ -5,6 +5,7 @@ import (
 	. "douyin/src/common"
 	"douyin/src/service"
 	"github.com/kataras/iris/v12"
+	"log"
 )
 
 type VideoList struct {
@@ -43,22 +44,28 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 	userId := cache.RCGet(token)
 
 	if userId == nil {
-		ctx.JSON(VideoListResponse{
+		_, err := ctx.JSON(VideoListResponse{
 			StatusCode: 0,
 			StatusMsg:  "鉴权失败，请检测是否登录",
 			VideoLists: nil,
 		})
+		if err != nil {
+			log.Println(err.Error())
+		}
 		return
 	}
 
 	//获取视频列表
 	videoLists := service.GetVideoListsById(userId.Val())
 
-	ctx.JSON(VideoListResponse{
+	_, err := ctx.JSON(VideoListResponse{
 		StatusCode: 1,
 		StatusMsg:  "成功",
 		VideoLists: videoLists,
 	})
+	if err != nil {
+		log.Println(err.Error())
+	}
 }
 
 func (pc *PublishController) PostAction(ctx iris.Context) {

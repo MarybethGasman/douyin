@@ -18,26 +18,35 @@ var (
 type FeedDao struct {
 }
 
+type TbUser struct {
+	UserId        int64  `gorm:"primaryKey"`
+	Name          string `gorm:"default:"`
+	FollowCount   int64  `gorm:"default:"`
+	FollowerCount int64  `gorm:"default:"`
+	IsFollow      int8   `gorm:"default:"`
+	Password      string `gorm:"default:"`
+}
+
 type TbVideo struct {
-	VideoId       int64     `gorm:"primaryKey"`
-	AuthorName    string    `gorm:"default:"`
+	VideoId       int64 `gorm:"primaryKey"`
+	UserId        int64
 	PlayUrl       string    `gorm:"default:"`
 	CoverUrl      string    `gorm:"default:"`
 	FavoriteCount int64     `gorm:"default:"`
 	CommentCount  int64     `gorm:"default:"`
+	Title         string    `gorm:"default:"`
 	CreateDate    time.Time `gorm:"default:"`
 	UpdateDate    time.Time `gorm:"default:"`
+	TbUser        TbUser    `gorm:"foreignKey:UserId;references:UserId"`
 }
 
-type TbUser struct {
-	UserId        int64
-	Name          string
-	FollowCount   int64
-	FollowerCount int64
-	IsFollow      int8
-	Password      string
+func (TbVideo) TableName() string {
+	return "tb_video"
 }
 
+func (TbUser) TableName() string {
+	return "tb_user"
+}
 func NewDB() *gorm.DB {
 	open, err := gorm.Open(mysql.New(mysql.Config{
 		DSN: dns,
@@ -53,19 +62,20 @@ func NewDB() *gorm.DB {
 	return open
 }
 
-// Select30VideoByUpdate 根据时间戳获取最多30条视频记录
-func (v *FeedDao) Select30VideoByUpdate(unix string) ([]TbVideo, error) {
+// SelectVideoByUpdate 根据时间戳获取最多number条视频记录
+func (v *FeedDao) SelectVideoByUpdate(unix string, number int) ([]TbVideo, error) {
 	var tb []TbVideo
-	date := "0000-00-00 00:00:00"
 	if len(unix) > 0 {
 		// 时间戳转换为时间
 		parseInt, err := strconv.ParseInt(unix, 10, 64)
 		if err != nil {
 			return nil, err
 		}
-		date = time.UnixMilli(parseInt).Format("2006-01-02 15:04:05")
+		date := time.UnixMilli(parseInt).Format("2006-01-02 15:04:05")
+		db.Preload("TbUser").Limit(number).Where("update_date < ?", date).Order("update_date DESC").Find(&tb)
+		return tb, nil
 	}
-	db.Order("update_date DESC").Where("update_date < ?", date).Limit(30).Find(&tb)
+	db.Preload("TbUser").Limit(number).Order("update_date DESC").Find(&tb)
 	return tb, nil
 }
 

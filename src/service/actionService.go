@@ -7,6 +7,8 @@ import (
 	"github.com/kataras/iris/v12"
 	"io"
 	"os"
+	"strconv"
+	"time"
 )
 
 var (
@@ -29,6 +31,8 @@ func Contribution(ctx iris.Context) {
 		return
 	}
 
+	title := r.FormValue("title")
+
 	file, head, err := r.FormFile("data")
 	if err != nil {
 		ctx.JSON(map[string]interface{}{
@@ -44,18 +48,20 @@ func Contribution(ctx iris.Context) {
 		if err != nil {
 			ctx.JSON(map[string]interface{}{
 				"status_code": 5,
-				"status_msg":  "MkdirAll filed,err: " + err.Error(),
+				"status_msg":  "create folder failed,err: " + err.Error(),
 			})
 			return
 		}
 	}
 
-	fw, err := os.Create(FilePath + head.Filename)
+	fileName := strconv.FormatInt(time.Now().UnixNano(), 10) + head.Filename
+
+	fw, err := os.Create(FilePath + fileName)
 
 	if err != nil {
 		ctx.JSON(map[string]interface{}{
 			"status_code": 2,
-			"status_msg":  "创建文件失败,err: " + err.Error(),
+			"status_msg":  "create file failed,err: " + err.Error(),
 		})
 		return
 	}
@@ -64,26 +70,26 @@ func Contribution(ctx iris.Context) {
 	if err != nil {
 		ctx.JSON(map[string]interface{}{
 			"status_code": 3,
-			"status_msg":  "拷贝文件失败,err: " + err.Error(),
+			"status_msg":  "copy file failed,err: " + err.Error(),
 		})
 		return
 	}
 	ctx.JSON(map[string]interface{}{
 		"status_code": 0,
-		"status_msg":  "保存文件成功",
+		"status_msg":  "save file success",
 	})
 	// TODO 将信息插入到数据库
 	dao := &db.FeedDao{}
 	id, err := rcGet.Int64()
 	if err != nil {
-		panic("获取id失败,err: " + err.Error())
+		panic("get id failed,err: " + err.Error())
 		return
 	}
 
-	user := dao.SelectUserById(id)
 	dao.InsertVideo(&db.TbVideo{
-		AuthorName: user.Name,
-		PlayUrl:    head.Filename,
+		UserId:  id,
+		PlayUrl: fileName,
+		Title:   title,
 	})
 }
 

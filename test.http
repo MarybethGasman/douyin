@@ -1,0 +1,17 @@
+POST http://localhost:80/api/item
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: sdjajasjdhashd
+
+--WebAppBoundary
+Content-Disposition: form-data; name="field-name"; filename="file.txt"
+
+< ./relative/path/to/local_file.txt
+--WebAppBoundary--
+
+###
+GET http://localhost:8080/douyin/feed
+
+###
+GET http://localhost:8080/douyin/publish/list?token=3fe8c20665c64e59c820c8eb7c3051a5&user_id=123
+
+###

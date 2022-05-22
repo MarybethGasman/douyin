@@ -35,7 +35,6 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 		if err != nil {
 			log.Println(err.Error())
 		}
-		log.Println("0号")
 		return
 	}
 

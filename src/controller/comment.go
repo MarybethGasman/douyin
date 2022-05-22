@@ -66,7 +66,7 @@ func (cc *CommentController) GetList(ctx iris.Context) mvc.Result {
 		}
 	}
 	//fmt.Println(token, video_id, user_id)
-	sql := "select comment_id,tb_comment.user_id,content,create_time,name from tb_comment left join tb_user on tb_comment.user_id=tb_user.user_id and video_id=? order by create_time desc;"
+	sql := "select comment_id,tb_comment.user_id,content,create_time,name from tb_comment inner join tb_user on tb_comment.user_id=tb_user.user_id and video_id=? order by create_time desc;"
 	rows, err := sqlSession.Query(sql, video_id)
 	if err != nil {
 		panic(err)
@@ -121,6 +121,17 @@ func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 		if err != nil {
 			return mvc.Response{Object: Response{StatusCode: 1, StatusMsg: "发表失败!!!"}}
 		}
+		//发布评论后，视频评论要加1
+		//先查询视频的总评论数
+		//可以直接查video表，但是测试为了准确性，直接查comment
+		//rows, _ := sqlSession.Query("select comment_count from tb_video where video_id=?", actionRequest.VideoId)
+		rows, _ := sqlSession.Query("select count(*) from tb_comment where video_id=?", actionRequest.VideoId)
+		var count int
+		if rows.Next() {
+			rows.Scan(&count)
+		}
+		sql1 := "update tb_video set comment_count=? where video_id=?"
+		sqlSession.Exec(sql1, count, actionRequest.VideoId)
 	} else {
 		//删除评论,得保证是本人删除，也就是删除的是当前用户的评论
 		sql := "delete from tb_comment where comment_id=? and user_id=?"
@@ -130,6 +141,17 @@ func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 				Object: Response{StatusCode: 1, StatusMsg: "删除失败,请重试!!!"},
 			}
 		}
+
+		//删除评论后，视频评论要-1
+		//先查询视频的总评论数
+		//可以直接查video表，但是测试为了准确性，直接查comment
+		//rows, _ := sqlSession.Query("select comment_count from tb_video where video_id=?", actionRequest.VideoId)
+		rows, _ := sqlSession.Query("select count(*) from tb_comment where video_id=?", actionRequest.VideoId)
+		var count int64
+		if rows.Next() {
+			rows.Scan(&count)
+		}
+		sqlSession.Exec("update tb_video set comment_count=? where video_id=?", count)
 	}
 	return mvc.Response{
 		Object: Response{StatusCode: 0, StatusMsg: "操作成功!!!"},

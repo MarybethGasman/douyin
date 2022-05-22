@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	videoUrl = "http://10.196.62.4:8080/douyin/feed/video/"      // 哪个服务器存放着视频的目录
+	videoUrl = "http://172.20.125.132:8080/douyin/feed/video/"   // 哪个服务器存放着视频的目录
 	imageUrl = "https://cdn.pixabay.com/photo/2016/03/27/18/10/" // 哪个服务器存放着视频封面的目录
 )
 

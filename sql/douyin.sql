@@ -90,7 +90,7 @@ DROP TABLE IF EXISTS `tb_video`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_video` (
   `video_id` bigint NOT NULL AUTO_INCREMENT,
-  `author_name` varchar(40) DEFAULT '',
+  `user_id` bigint NULL,
   `play_url` varchar(60) DEFAULT '',
   `cover_url` varchar(60) DEFAULT '',
   `favorite_count` int DEFAULT '0',

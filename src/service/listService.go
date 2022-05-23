@@ -1,8 +1,12 @@
 package service
 
 import (
+	"bytes"
 	. "douyin/src/common"
 	db2 "douyin/src/db"
+	"os"
+	"os/exec"
+	"strings"
 )
 
 const TableNameFavorite = "tb_favorite"
@@ -26,6 +30,16 @@ func (*Favorite) TableName() string {
 func GetVideoListsById(id string) []VideoList2 {
 	var videos1 []VideoList1
 	var user User2
+	//得到文件路径
+	stdout, _ := exec.Command("go", "env", "GOMOD").Output()
+	path := string(bytes.TrimSpace(stdout))
+	if path == "" {
+		os.Exit(1)
+	}
+	ss := strings.Split(path, "\\")
+	ss = ss[:len(ss)-1]
+	path = strings.Join(ss, "\\") + "\\"
+
 	db := db2.GetDBConnect()
 	result := db.Select("video_id", "author_name", "play_url", "cover_url", "favorite_count", "comment_count").Where("author_name = ?", id).Find(&videos1)
 	db.Model(User{}).Where("user_id = ?", id).First(&user)
@@ -34,9 +48,11 @@ func GetVideoListsById(id string) []VideoList2 {
 	var i int64
 	for i = 0; i < n; i++ {
 		videoS[i].Id = videos1[i].Id
-		videoS[i].PlayURL = videos1[i].PlayURL
+		//拼接得到视频地址
+		videoS[i].PlayURL = path + filePath + videos1[i].PlayURL
 		videoS[i].CommentCount = videos1[i].CommentCount
 		videoS[i].FavoriteCount = videos1[i].FavoriteCount
+		//我也不知道封面放在哪？
 		videoS[i].CoverURL = videos1[i].CoverURL
 		videoS[i].Author = user
 

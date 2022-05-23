@@ -1,9 +1,9 @@
 datasource:
   driverName: mysql
-  dataSourceName: root:Ling@tcp(127.0.0.1:3306)/douying?charset=utf8&interpolateParams=true
+  dataSourceName: root:123123@tcp(127.0.0.1:3306)/douyin
 redis:
   host: localhost
   port: 6379
-  password: Liang
+  password:
 server:
   port: 8080

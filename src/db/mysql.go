@@ -9,7 +9,10 @@ import (
 
 var DB *sql.DB
 
+
+
 func init() {
+
 	driverName := AppConfig.Get("datasource.driverName").(string)
 	dataSourceName := AppConfig.Get("datasource.dataSourceName").(string)
 	//打印文件读取出来的内容:

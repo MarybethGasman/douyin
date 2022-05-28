@@ -13,13 +13,13 @@ import (
 type FeedController struct {
 }
 
-func (fc *FeedController) Get(ctx iris.Context) {
-	ctx.JSON(service.GetFeed(ctx.URLParam("latest_time"), ctx.URLParam("token")))
-}
-
 func (fc *FeedController) BeforeActivation(b mvc.BeforeActivation) {
 	b.Handle("GET", "/video/{videoName}", "GetFeedVideo")
 	b.Handle("GET", "/", "Get")
+}
+
+func (fc *FeedController) Get(ctx iris.Context) {
+	ctx.JSON(service.GetFeed(ctx.URLParam("latest_time"), ctx.URLParam("token")))
 }
 
 func (fc *FeedController) GetFeedVideo(b iris.Context) {
@@ -34,5 +34,5 @@ func (fc *FeedController) GetFeedVideo(b iris.Context) {
 	ss = ss[:len(ss)-1]
 	path = strings.Join(ss, "\\") + "\\"
 
-	b.SendFile(path+"upload/"+videoName, videoName)
+	b.SendFile(path+service.FilePath+videoName, videoName)
 }

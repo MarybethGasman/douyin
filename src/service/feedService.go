@@ -1,13 +1,15 @@
 package service
 
 import (
+	"douyin/src/cache"
+	"douyin/src/config"
 	"douyin/src/db"
 	"time"
 )
 
-const (
-	videoUrl = "http://172.20.125.132:8080/douyin/feed/video/"   // 哪个服务器存放着视频的目录
-	imageUrl = "https://cdn.pixabay.com/photo/2016/03/27/18/10/" // 哪个服务器存放着视频封面的目录
+var (
+	videoUrl = config.AppConfig.GetString("video.videoUrl")
+	imageUrl = config.AppConfig.GetString("video.imageUrl")
 )
 
 type FeedData struct {
@@ -33,41 +35,44 @@ type VideoList struct {
 	FavoriteCount int64  `json:"favorite_count"`
 	CommentCount  int64  `json:"comment_count"`
 	IsFavorite    bool   `json:"is_favorite"`
+	Title         string `json:"title"`
 }
 
 func GetFeed(latestTime string, token string) *FeedData {
 	data := &FeedData{}
+	var userId int64
+	userId = -1
 
 	dao := &db.FeedDao{}
-	videos, err := dao.Select30VideoByUpdate(latestTime)
+	videos, err := dao.SelectVideoByUpdate(latestTime, 30)
 	if err != nil {
 		return &FeedData{
 			StatusCode: 1,
 			StatusMsg:  "查找视频失败,err: " + err.Error(),
 		}
 	}
-	// 如果数据库视频没有数据 那么就加入下面这一条测试数据 防止客户端崩溃
-	if len(videos) == 0 {
-		data.VideoList = append(data.VideoList, VideoList{
-			ID: 0, Author: Author{ID: 0, Name: "test"},
-			PlayUrl:       "https://www.w3schools.com/html/movie.mp4",
-			CoverUrl:      "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg",
-			FavoriteCount: 0,
-			CommentCount:  0,
-			//TODO 这块需要一个判断是否点赞
-			IsFavorite: false,
-		})
+
+	if len(token) > 0 {
+		get := cache.RCGet(token)
+		userId, err = get.Int64()
 	}
 
 	for _, v := range videos {
 		data.VideoList = append(data.VideoList, VideoList{
-			ID: v.VideoId, Author: Author{ID: 1, Name: v.AuthorName},
+			ID: v.VideoId,
+			Author: Author{
+				ID:            v.TbUser.UserId,
+				Name:          v.TbUser.Name,
+				FollowCount:   v.TbUser.FollowCount,
+				FollowerCount: v.TbUser.FollowerCount,
+				IsFollow:      isFollow(userId, v.VideoId),
+			},
 			PlayUrl:       getVideoUrl(v.PlayUrl),
 			CoverUrl:      getImageUrl(v.CoverUrl),
 			FavoriteCount: v.FavoriteCount,
 			CommentCount:  v.CommentCount,
-			//TODO 这块需要一个判断是否点赞
-			IsFavorite: false,
+			Title:         v.Title,
+			IsFavorite:    isFavorite(userId, v.VideoId),
 		})
 	}
 	// 已经没有视频了 从头继续播放
@@ -87,4 +92,20 @@ func getVideoUrl(videoName string) string {
 
 func getImageUrl(imageName string) string {
 	return imageUrl + imageName
+}
+
+func isFollow(uId int64, vId int64) bool {
+	if uId == -1 {
+		return false
+	}
+	// TODO 查看该uId用户是否关注了该vId视频
+	return true
+}
+
+func isFavorite(uId int64, vId int64) bool {
+	if uId == -1 {
+		return false
+	}
+	// TODO 查看该uId用户是否点赞了vId该视频
+	return true
 }

@@ -1,9 +1,16 @@
 datasource:
   driverName: mysql
-  dataSourceName: root:123123@tcp(127.0.0.1:3306)/douyin
+  dataSourceName: tainanle:123456@tcp(127.0.0.1:3306)/db10
 redis:
-  host: localhost
+  host: 192.168.17.131
   port: 6379
-  password:
+  password: 123456
+
 server:
   port: 8080
+
+# 视频的存放地址
+video:
+  videoUrl: http://10.196.62.4:8080/douyin/feed/video/  # 这个是获取视频流服务器的接口地址
+  imageUrl: https://cdn.pixabay.com/photo/2016/03/27/18/10/ #服务器上传文件并没有这封面好像
+  filePath: upload/ # 如果存放本机的话 这个就是服务器中视频存放的目录

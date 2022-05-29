@@ -23,12 +23,12 @@ DROP TABLE IF EXISTS `tb_comment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_comment` (
-  `comment_id` bigint NOT NULL AUTO_INCREMENT,
-  `username` varchar(40) DEFAULT '',
-  `content` varchar(40) DEFAULT '',
-  `isdeleted` tinyint DEFAULT '0',
+  `comment_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(40) DEFAULT '',
+  `content` VARCHAR(40) DEFAULT '',
+  `isdeleted` TINYINT DEFAULT '0',
   PRIMARY KEY (`comment_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,12 +48,12 @@ DROP TABLE IF EXISTS `tb_favorite`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_favorite` (
-  `favorite_id` bigint NOT NULL AUTO_INCREMENT,
-  `username` varchar(40) DEFAULT '',
-  `video_id` bigint DEFAULT '0',
-  `isdeleted` tinyint DEFAULT '0',
+  `favorite_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(40) DEFAULT '',
+  `video_id` BIGINT DEFAULT '0',
+  `isdeleted` TINYINT DEFAULT '0',
   PRIMARY KEY (`favorite_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,12 +73,12 @@ DROP TABLE IF EXISTS `tb_relation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_relation` (
-  `relation_id` bigint NOT NULL AUTO_INCREMENT,
-  `follower_id` bigint DEFAULT '0',
-  `following_id` bigint DEFAULT '0',
-  `isdeleted` tinyint DEFAULT '0',
+  `relation_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `follower_id` BIGINT DEFAULT '0',
+  `following_id` BIGINT DEFAULT '0',
+  `isdeleted` TINYINT DEFAULT '0',
   PRIMARY KEY (`relation_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,14 +98,14 @@ DROP TABLE IF EXISTS `tb_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_user` (
-  `user_id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(40) DEFAULT '',
-  `follow_count` int DEFAULT '0',
-  `follower_count` int DEFAULT '0',
-  `is_follow` tinyint DEFAULT '0',
-  `password` char(40) DEFAULT '',
+  `user_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(40) DEFAULT '',
+  `follow_count` INT DEFAULT '0',
+  `follower_count` INT DEFAULT '0',
+  `is_follow` TINYINT DEFAULT '0',
+  `password` CHAR(40) DEFAULT '',
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,14 +126,14 @@ DROP TABLE IF EXISTS `tb_video`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_video` (
-  `video_id` bigint NOT NULL AUTO_INCREMENT,
-  `author_name` varchar(40) DEFAULT '',
-  `play_url` varchar(60) DEFAULT '',
-  `cover_url` varchar(60) DEFAULT '',
-  `favorite_count` int DEFAULT '0',
-  `comment_count` int DEFAULT '0',
+  `video_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `author_name` VARCHAR(40) DEFAULT '',
+  `play_url` VARCHAR(60) DEFAULT '',
+  `cover_url` VARCHAR(60) DEFAULT '',
+  `favorite_count` INT DEFAULT '0',
+  `comment_count` INT DEFAULT '0',
   PRIMARY KEY (`video_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,5 +153,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2022-05-13 12:21:22

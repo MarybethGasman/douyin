@@ -39,6 +39,19 @@ type Video struct {
 type FavoriteController struct {
 }
 
+type Response struct {
+	StatusCode int
+	StatusMsg  string
+}
+type User struct {
+	Id            int64  `gorm:"column:user_id;primaryKey;autoIncrement:true" json:"id,omitempty"`
+	Name          string `gorm:"column:name" json:"name,omitempty"`
+	FollowCount   int64  `gorm:"column:follow_count" json:"follow_count,omitempty"`
+	FollowerCount int64  `gorm:"column:follower_count" json:"follower_count,omitempty"`
+	IsFollow      bool   `gorm:"column:is_follow" json:"is_follow,omitempty"`
+	Password      string `gorm:"column:password"`
+}
+
 /**
 点赞操作
 */
@@ -164,7 +177,6 @@ func (fc *FavoriteController) PostList(ctx iris.Context) mvc.Result {
 		panic("获取视频列表失败")
 	}
 
-<<<<<<< HEAD
 	// 鉴权token，是否登录或者注册
 	if token != "" && cache.RCExists(token) {
 		//更新用户token
@@ -244,6 +256,4 @@ func (fc *FavoriteController) PostList(ctx iris.Context) mvc.Result {
 			},
 		}
 	}
-=======
->>>>>>> 416631de5f0e7587a197f0d1ca9f8bb3dd38d200
 }

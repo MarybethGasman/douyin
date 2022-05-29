@@ -22,8 +22,6 @@ func (fc *FeedController) Get(ctx iris.Context) {
 	ctx.JSON(service.GetFeed(ctx.URLParam("latest_time"), ctx.URLParam("token")))
 }
 
-<<<<<<< HEAD
-=======
 func (fc *FeedController) GetFeedVideo(b iris.Context) {
 	videoName := b.Params().Get("videoName")
 
@@ -37,5 +35,4 @@ func (fc *FeedController) GetFeedVideo(b iris.Context) {
 	path = strings.Join(ss, "\\") + "\\"
 
 	b.SendFile(path+service.FilePath+videoName, videoName)
->>>>>>> 416631de5f0e7587a197f0d1ca9f8bb3dd38d200
 }

@@ -9,11 +9,4 @@ require (
 	github.com/kataras/iris/v12 v12.2.0-beta1
 	github.com/mattn/go-sqlite3 v1.14.13 // indirect
 	github.com/spf13/viper v1.11.0
-<<<<<<< HEAD
-	gorm.io/driver/sqlite v1.3.2 // indirect
-	gorm.io/gorm v1.23.5 // indirect
-=======
-	gorm.io/driver/mysql v1.3.3
-	gorm.io/gorm v1.23.5
->>>>>>> 416631de5f0e7587a197f0d1ca9f8bb3dd38d200
 )

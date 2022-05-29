@@ -95,6 +95,7 @@ CREATE TABLE `tb_video` (
   `cover_url` varchar(60) DEFAULT '',
   `favorite_count` int DEFAULT '0',
   `comment_count` int DEFAULT '0',
+  `title` text DEFAULT NULL COMMENT '视频标题',
   `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`video_id`)

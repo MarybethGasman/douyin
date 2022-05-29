@@ -164,6 +164,7 @@ func (fc *FavoriteController) PostList(ctx iris.Context) mvc.Result {
 		panic("获取视频列表失败")
 	}
 
+<<<<<<< HEAD
 	// 鉴权token，是否登录或者注册
 	if token != "" && cache.RCExists(token) {
 		//更新用户token
@@ -243,4 +244,6 @@ func (fc *FavoriteController) PostList(ctx iris.Context) mvc.Result {
 			},
 		}
 	}
+=======
+>>>>>>> 416631de5f0e7587a197f0d1ca9f8bb3dd38d200
 }

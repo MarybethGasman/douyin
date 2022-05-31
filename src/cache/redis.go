@@ -64,3 +64,28 @@ func ExampleClient() {
 		fmt.Println("key2", val2)
 	}
 }
+
+/**
+author:BXuan
+对Redis进行哈希键值对插入
+*/
+func RCSAdd(key string, members interface{}) {
+	rc.SAdd(ctx, key, members)
+}
+
+/**
+author: BXUan
+对Redis进行哈希键值对的删除操作
+*/
+func RCSRem(key string, members interface{}) {
+	rc.SRem(ctx, key, members)
+}
+
+/**
+author: BXuan
+取出Redis中对应键的所有值
+返回取出的所有的值
+*/
+func RCSmembers(key string) *redis.StringSliceCmd {
+	return rc.SMembers(ctx, key)
+}

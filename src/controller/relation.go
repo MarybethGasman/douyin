@@ -106,7 +106,7 @@ func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
 	}
 }
 
-func (rc *RelationController) GetList(context iris.Context) mvc.Result {
+func (rc *RelationController) GetFollowList(context iris.Context) mvc.Result {
 	userid := context.FormValue("user_id")
 	token := context.FormValue("token")
 	if token == "" || !cache.RCExists(token) {

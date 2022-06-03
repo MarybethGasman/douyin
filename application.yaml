@@ -1,6 +1,6 @@
 datasource:
   driverName: mysql
-  dataSourceName: saidaiyidui:qingxun@tcp(124.223.112.154:3306)/douyin
+  dataSourceName: sandaiyidui:qingxun@tcp(124.223.112.154:3306)/douyin
 redis:
   host: 124.223.112.154
   port: 6379

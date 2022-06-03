@@ -1,10 +1,10 @@
 datasource:
   driverName: mysql
-  dataSourceName: tainanle:123456@tcp(127.0.0.1:3306)/db10
+  dataSourceName: saidaiyidui:qingxun@tcp(124.223.112.154:3306)/douyin
 redis:
-  host: 192.168.17.131
+  host: 124.223.112.154
   port: 6379
-  password: 123456
+  password: 
 
 server:
   port: 8080

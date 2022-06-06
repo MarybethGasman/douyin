@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"github.com/kataras/iris/v12"
 	"log"
+	"strconv"
 )
 
 type PublishController struct {
@@ -38,13 +39,17 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 		}
 		return
 	}
-
+	log.Println("通过验证")
 	//获取视频列表
-	videoLists := service.GetVideoListsById(userId)
+	useridINT, err := strconv.Atoi(userId)
+	if err != nil {
+		log.Println(err)
+	}
+	videoLists := service.GetVideoListsById(useridINT)
 
 	//不知道为什么videoLists不能为空，等我解决吧
 	//已解决：videoLists应为是数组，所以是空是[]，而不是nil
-	_, err := ctx.JSON(VideoListResponse{
+	_, err = ctx.JSON(VideoListResponse{
 		StatusCode: 0,
 		StatusMsg:  "成功",
 		VideoLists: videoLists,

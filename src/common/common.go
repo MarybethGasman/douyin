@@ -7,11 +7,12 @@ type Response struct {
 
 type VideoList1 struct {
 	Id            int64  `gorm:"column:video_id;primaryKey;autoIncrement:true" json:"id"`
-	AuthorName    string `gorm:"column:author_name"`
+	UserId        int64  `gorm:"column:user_id"`
 	PlayURL       string `gorm:"column:play_url" json:"play_url"`
 	CoverURL      string `gorm:"column:cover_url" json:"cover_url"`
 	FavoriteCount int64  `gorm:"column:favorite_count"  json:"favorite_count"`
 	CommentCount  int64  `gorm:"column:comment_count" json:"comment_count"`
+	Title         string `gorm:"column:title"`
 }
 
 func (*VideoList1) TableName() string {

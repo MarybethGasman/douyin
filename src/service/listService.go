@@ -25,15 +25,17 @@ func (*Favorite) TableName() string {
 /*
 获取视频列表
 */
-func GetVideoListsById(id string) []VideoList2 {
+func GetVideoListsById(id int) []VideoList2 {
+
 	var videos1 []VideoList1
 	var user User2
 
 	db := db2.GetDBConnect()
-	result := db.Select("video_id", "author_name", "play_url", "cover_url", "favorite_count", "comment_count").Where("author_name = ?", id).Find(&videos1)
+	result := db.Select("video_id", "user_id", "play_url", "cover_url", "favorite_count", "comment_count").Where("user_id = ?", id).Find(&videos1)
 	db.Model(User{}).Where("user_id = ?", id).First(&user)
 	n := result.RowsAffected
 	videoS := make([]VideoList2, n)
+
 	var i int64
 	for i = 0; i < n; i++ {
 		videoS[i].Id = videos1[i].Id
@@ -53,7 +55,7 @@ func GetVideoListsById(id string) []VideoList2 {
 		} else {
 			videoS[i].IsFavorite = false
 		}
-		videoS[i].Title = "数据库没有这个字段"
+		videoS[i].Title = videos1[i].Title
 	}
 	return videoS
 }

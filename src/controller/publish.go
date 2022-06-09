@@ -4,7 +4,6 @@ import (
 	"douyin/src/cache"
 	. "douyin/src/common"
 	"douyin/src/service"
-	"encoding/json"
 	"github.com/kataras/iris/v12"
 	"log"
 	"strconv"
@@ -22,11 +21,7 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 	request := ctx.Request()
 	//获取参数
 	token := request.FormValue("token")
-	userID := request.FormValue("user_id")
 	userId := cache.RCGet(token).Val()
-
-	//查看输出
-	log.Println("token:"+token, "userId:"+userID, "userid2:"+userId)
 
 	if userId == "" {
 		_, err := ctx.JSON(VideoListResponse{
@@ -39,7 +34,6 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 		}
 		return
 	}
-	log.Println("通过验证")
 	//获取视频列表
 	useridINT, err := strconv.Atoi(userId)
 	if err != nil {
@@ -54,7 +48,6 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 		StatusMsg:  "成功",
 		VideoLists: videoLists,
 	})
-	log.Println(json.Marshal(videoLists))
 	if err != nil {
 		log.Println(err.Error())
 	}

@@ -4,11 +4,12 @@ import (
 	"douyin/src/cache"
 	"douyin/src/config"
 	"douyin/src/db"
-	"github.com/kataras/iris/v12"
 	"io"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/kataras/iris/v12"
 )
 
 var (
@@ -21,7 +22,7 @@ func Contribution(ctx iris.Context) {
 
 	text := r.FormValue("token")
 
-	// TODO 鉴权
+	//  鉴权
 	rcGet := cache.RCGet(text)
 	if rcGet == nil {
 		ctx.JSON(map[string]interface{}{
@@ -78,7 +79,7 @@ func Contribution(ctx iris.Context) {
 		"status_code": 0,
 		"status_msg":  "save file success",
 	})
-	// TODO 将信息插入到数据库
+	// 将信息插入到数据库
 	dao := &db.FeedDao{}
 	id, err := rcGet.Int64()
 	if err != nil {

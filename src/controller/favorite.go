@@ -133,7 +133,7 @@ func (fc *FavoriteController) GetList(ctx iris.Context) mvc.Result {
 	userId, _ = cache.RCGet(token).Int64()
 	cache.RCSet(token, userId, time.Minute*30)
 	user := SelectUserById(userId)
-	rows, err := DB.Query("select video_id, play_url, cover_url, favorite_count, comment_count, title,tu.user_id,tu.name,follow_count, follower_count from tb_video tv inner join tb_user tu on tv.user_id = tu.user_id where video_id in (select video_id from tb_favorite where user_id = ?)", user.Id)
+	rows, err := DB.Query("select video_id, play_url, cover_url, favorite_count, comment_count, title,tu.user_id,tu.name,follow_count, follower_count from tb_video tv inner join tb_user tu on tv.user_id = tu.user_id where video_id in (select video_id from tb_favorite where favorite_id = ? and isdeleted=false)", user.Id)
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -13,7 +13,8 @@ DROP TABLE IF EXISTS `tb_favorite`;
 CREATE TABLE `tb_favorite` (
   `favorite_id` bigint NOT NULL AUTO_INCREMENT,
   `username` varchar(40) DEFAULT '',
-  `video_id` bigint DEFAULT '0',
+  `user_id` bigint DEFAULT 0,
+  `video_id` bigint DEFAULT 0,
   `is_deleted` tinyint DEFAULT 0,
   PRIMARY KEY (`favorite_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

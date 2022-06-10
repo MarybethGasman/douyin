@@ -2,12 +2,13 @@ package db
 
 import (
 	"douyin/src/config"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 	"os"
 	"strconv"
 	"time"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var (
@@ -25,6 +26,20 @@ type TbUser struct {
 	FollowerCount int64  `gorm:"default:"`
 	IsFollow      int8   `gorm:"default:"`
 	Password      string `gorm:"default:"`
+}
+
+type TbRelation struct {
+	RelationId  int64  `gorm:"primaryKey"`
+	FollowerId  string `gorm:"default:"`
+	FollowingId int64  `gorm:"default:"`
+	Isdeleted   int8   `gorm:"default:"`
+}
+
+type TbFavorite struct {
+	FavoriteId int64 `gorm:"primaryKey"`
+	UserId     int64 `gorm:"default:"`
+	VideoId    int64 `gorm:"default:"`
+	IsDeleted  int8  `gorm:"default:"`
 }
 
 type TbVideo struct {
@@ -88,4 +103,18 @@ func (v *FeedDao) SelectUserById(id int64) *TbUser {
 	user := &TbUser{}
 	db.Where("user_id = ?", id).First(user)
 	return user
+}
+
+// 根据用户名和视频Id查询是否有点赞
+func (v *FeedDao) IsFavorite(userID int64, videoID int64) bool {
+	var count int64
+	db.Model(&TbFavorite{}).Where("`user_id` = ? and `video_id` = ? and `is_deleted` = 0", userID, videoID).Count(&count)
+	return count > 0
+}
+
+// 根据用户名id查询是否有关注 true 表示关注
+func (v *FeedDao) IsFollwer(originUserID int64, targetUserID int64) bool {
+	var size int64
+	db.Model(&TbRelation{}).Where("`follower_id` = ? and `following_id` = ? and `isdeleted` = 0", originUserID, targetUserID).Count(&size)
+	return size > 0
 }

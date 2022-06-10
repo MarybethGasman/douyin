@@ -57,15 +57,7 @@ type CommentController struct {
 */
 
 func (cc *CommentController) GetList(ctx iris.Context) mvc.Result {
-	token := ctx.URLParam("token")
 	video_id := ctx.URLParam("video_id")
-	//user_id := ctx.URLParam("user_id")
-	if token == "" {
-		return mvc.Response{
-			Object: Response{StatusCode: 1, StatusMsg: "请先登录..."},
-		}
-	}
-	//fmt.Println(token, video_id, user_id)
 	sql := "select comment_id,tb_comment.user_id,content,create_time,name from tb_comment inner join tb_user on tb_comment.user_id=tb_user.user_id and video_id=? order by create_time desc;"
 	rows, err := sqlSession.Query(sql, video_id)
 	if err != nil {

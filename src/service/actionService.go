@@ -6,9 +6,11 @@ import (
 	"douyin/src/config"
 	"douyin/src/db"
 	"fmt"
-	"log"
+	"github.com/disintegration/imaging"
 	"github.com/kataras/iris/v12"
+	ffmpeg_go "github.com/u2takey/ffmpeg-go"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -16,10 +18,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/disintegration/imaging"
-	"github.com/kataras/iris/v12"
-	ffmpeg_go "github.com/u2takey/ffmpeg-go"
 )
 
 var (

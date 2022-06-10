@@ -1,12 +1,17 @@
 package service
 
 import (
+	"bytes"
 	"douyin/src/cache"
 	"douyin/src/config"
 	"douyin/src/db"
+	"fmt"
 	"github.com/kataras/iris/v12"
 	"io"
+	"mime/multipart"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -74,6 +79,19 @@ func Contribution(ctx iris.Context) {
 		})
 		return
 	}
+
+	//将文件发送到远程服务器
+	uri := "http://124.223.112.154:8801/file/upload?name=" + fileName
+	req, err := NewUploadRequest1(uri, map[string]string{
+		"name": fileName,
+	}, FilePath+fileName)
+	client := http.Client{}
+	res, err := client.Do(req)
+	defer func() {
+		res.Body.Close()
+		fmt.Println("finish")
+	}()
+
 	ctx.JSON(map[string]interface{}{
 		"status_code": 0,
 		"status_msg":  "save file success",
@@ -99,4 +117,42 @@ func isHasDir(path string) (bool, error) {
 		return false, err
 	}
 	return stat.IsDir(), nil
+}
+func NewUploadRequest1(url string, params map[string]string, path string) (*http.Request, error) {
+
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// 实例化multipart
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	// 创建multipart 文件字段
+	part, err := writer.CreateFormFile("data", filepath.Base(path))
+	if err != nil {
+		return nil, err
+	}
+	// 写入文件数据到multipart
+	_, err = io.Copy(part, file)
+	//将额外参数也写入到multipart
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	//创建请求
+	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		return nil, err
+	}
+	//不要忘记加上writer.FormDataContentType()，
+	//该值等于content-type :multipart/form-data; boundary=xxxxx
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+	return req, nil
 }

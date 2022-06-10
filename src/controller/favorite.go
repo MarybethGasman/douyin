@@ -61,8 +61,8 @@ func (fc *FavoriteController) PostAction(ctx iris.Context) mvc.Result {
 	if actionType == 1 {
 		tx, err := DB.Begin()
 		_, err = tx.Exec(
-			"insert into tb_favorite(username,video_id,is_deleted) values (?,?,?)",
-			user.Name, videoId, 0)
+			"insert into tb_favorite(user_id,video_id,is_deleted) values (?,?,?)",
+			user.Id, videoId, 0)
 		_, err = tx.Exec("update tb_video set favorite_count = favorite_count + 1 where video_id = ?", videoId)
 		if err != nil {
 			tx.Rollback()
@@ -78,8 +78,8 @@ func (fc *FavoriteController) PostAction(ctx iris.Context) mvc.Result {
 	} else if actionType == 2 {
 		tx, err := DB.Begin()
 		_, err = tx.Exec(
-			"update tb_favorite set is_deleted = 1 where username = ? and video_id = ?",
-			user.Name, videoId)
+			"update tb_favorite set is_deleted = 1 where user_id = ? and video_id = ?",
+			user.Id, videoId)
 		_, err = tx.Exec("update tb_video set favorite_count = favorite_count - 1 where video_id = ?", videoId)
 		if err != nil {
 			tx.Rollback()
@@ -133,7 +133,7 @@ func (fc *FavoriteController) GetList(ctx iris.Context) mvc.Result {
 	userId, _ = cache.RCGet(token).Int64()
 	cache.RCSet(token, userId, time.Minute*30)
 	user := SelectUserById(userId)
-	rows, err := DB.Query("select video_id, play_url, cover_url, favorite_count, comment_count, title,tu.user_id,tu.name,follow_count, follower_count from tb_video tv inner join tb_user tu on tv.user_id = tu.user_id where video_id in (select video_id from tb_favorite where username = ?)", user.Name)
+	rows, err := DB.Query("select video_id, play_url, cover_url, favorite_count, comment_count, title,tu.user_id,tu.name,follow_count, follower_count from tb_video tv inner join tb_user tu on tv.user_id = tu.user_id where video_id in (select video_id from tb_favorite where user_id = ?)", user.Id)
 	if err != nil {
 		log.Fatalln(err)
 	}

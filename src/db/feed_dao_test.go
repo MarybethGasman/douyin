@@ -29,8 +29,8 @@ func TestFeedDao_SelectVideoByUpdate(t *testing.T) {
 }
 
 func TestFeedDao_InsertVideo(t *testing.T) {
-	//dao := &FeedDao{}
-	//dao.InsertVideo(&TbVideo{
+	//db := &FeedDao{}
+	//db.InsertVideo(&TbVideo{
 	//	UserId:  30,
 	//	PlayUrl: "head.Filename",
 	//})

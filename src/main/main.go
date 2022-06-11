@@ -13,6 +13,9 @@ package main
 // 评论操作和评论列表 徐政
 // 关注操作和关注列表 陈鹤中
 import (
+	. "douyin/src/config"
+	. "douyin/src/controller"
+	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"strconv"
 )

@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"context"
 	"douyin/src/cache"
 	"douyin/src/config"
 	"douyin/src/db"
@@ -84,18 +85,11 @@ func Contribution(ctx iris.Context) {
 		return
 	}
 
-	//将文件发送到远程服务器
-	uri := "http://124.223.112.154:8801/file/upload?name=" + fileName
-	req, err := NewUploadRequest1(uri, map[string]string{
-		"name": fileName,
-	}, FilePath+fileName)
-	client := http.Client{}
-	res, err := client.Do(req)
-	defer func() {
-		res.Body.Close()
-		fmt.Println("finish")
-	}()
-
+	//将文件存储到桶当中
+	_, err = config.Cos.Object.PutFromFile(context.Background(), "/videos/"+fileName, FilePath+fileName, nil)
+	if err != nil {
+		panic(err)
+	}
 	ctx.JSON(map[string]interface{}{
 		"status_code": 0,
 		"status_msg":  "save file success",
@@ -151,6 +145,12 @@ func GetSnapshot(videoPath, snapshotPath string, frameNum int) (snapshotName str
 	// 成功则返回生成的缩略图名
 	names := strings.Split(snapshotPath, "/")
 	snapshotName = names[len(names)-1] + ".jpeg"
+
+	//将文件存储到桶当中
+	_, err = config.Cos.Object.PutFromFile(context.Background(), "/pictures/"+snapshotName, snapshotPath+".jpeg", nil)
+	if err != nil {
+		panic(err)
+	}
 	return
 }
 func NewUploadRequest1(url string, params map[string]string, path string) (*http.Request, error) {

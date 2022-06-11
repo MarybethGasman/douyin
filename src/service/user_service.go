@@ -1,5 +1,10 @@
 package service
 
+// 用户注册、登录、获取用户信息逻辑
+// 登录状态由redis保持，当用户注册或登录后，将用户名和盐值MD5后作为key存入redis，value为用户id
+// 该key的有效期为30分钟，用户每进行一次请求都会续期
+// 常用的用户鉴权方法还有jwt，但简单的redis实现也可满足需求
+// author: 谭盟，张博思
 import (
 	. "douyin/src/cache"
 	. "douyin/src/common"
@@ -18,6 +23,7 @@ func Register(username string, password string) UserLoginAndRegisterResponse {
 	var userInDB User
 	userInDB.Id = 0
 	userInDB.Name = username
+	//step1:判断用户名是否存在
 	row := DB.QueryRow("select user_id from tb_user where name = ?", username)
 	row.Scan(&userInDB.Id)
 	userInDB.Password = password
@@ -26,7 +32,7 @@ func Register(username string, password string) UserLoginAndRegisterResponse {
 			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
 		}
 	} else {
-		//更新数据
+		//step2:插入新记录
 		result, err := DB.Exec(
 			"insert into tb_user(name,password) values(?,?)",
 			userInDB.Name, userInDB.Password)
@@ -37,7 +43,7 @@ func Register(username string, password string) UserLoginAndRegisterResponse {
 		if err != nil {
 			panic("获取新增数据ID错误")
 		}
-
+		//step3:保存登录状态信息
 		token := utils.MD5WithSalt(userInDB.Name)
 		RCSet(token, userInDB.Id, 30*time.Minute)
 
@@ -77,20 +83,5 @@ func Info(userId int64) User2 {
 	row := DB.QueryRow(
 		"select user_id,name,follow_count,follower_count,is_follow from tb_user where user_id = ?", userId)
 	row.Scan(&user.Id, &user.Name, &user.FollowCount, &user.FollowerCount, &user.IsFollow)
-
 	return user
 }
-
-//type User struct {
-//	Id            int64  `json:"id,omitempty"`
-//	Name          string `json:"name,omitempty"`
-//	FollowCount   int64  `json:"follow_count,omitempty"`
-//	FollowerCount int64  `json:"follower_count,omitempty"`
-//	IsFollow      bool   `json:"is_follow,omitempty"`
-//	password      string
-//}
-
-//func (user *User) equals(user2 User) bool {
-//	return user.Name == user2.Name &&
-//		user.password == user2.password
-//}

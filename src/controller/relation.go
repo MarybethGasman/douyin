@@ -46,7 +46,7 @@ func (rc *RelationController) PostAction(context iris.Context) mvc.Result {
 	touserid := context.URLParam("to_user_id")
 	if userid == touserid {
 		return mvc.Response{
-			Object: actionResponse{StatusCode: 0, StatusMsg: "无法关注自己"},
+			Object: actionResponse{StatusCode: 100, StatusMsg: "无法关注自己"},
 		}
 	}
 	actiontype, _ := strconv.Atoi(context.URLParam("action_type"))

@@ -49,7 +49,7 @@ func GetVideoListsById(id int) []VideoList2 {
 		videoS[i].Author = user
 
 		var favorite Favorite
-		cnt := db.Where("username = ?", user.Id).Where("video_id = ?", videoS[i].Id).First(&favorite)
+		cnt := db.Where("user_id = ?", user.Id).Where("video_id = ?", videoS[i].Id).First(&favorite)
 		if cnt.RowsAffected > 0 && favorite.Isdeleted != 1 {
 			videoS[i].IsFavorite = true
 		} else {

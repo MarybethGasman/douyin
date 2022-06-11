@@ -10,6 +10,7 @@ import (
 var (
 	videoUrl = config.AppConfig.GetString("video.videoUrl")
 	imageUrl = config.AppConfig.GetString("video.imageUrl")
+	dao      = &db.FeedDao{}
 )
 
 type FeedData struct {
@@ -43,7 +44,6 @@ func GetFeed(latestTime string, token string) *FeedData {
 	var userId int64
 	userId = -1
 
-	dao := &db.FeedDao{}
 	videos, err := dao.SelectVideoByUpdate(latestTime, 30)
 	if err != nil {
 		return &FeedData{
@@ -65,7 +65,7 @@ func GetFeed(latestTime string, token string) *FeedData {
 				Name:          v.TbUser.Name,
 				FollowCount:   v.TbUser.FollowCount,
 				FollowerCount: v.TbUser.FollowerCount,
-				IsFollow:      isFollow(userId, v.VideoId),
+				IsFollow:      isFollow(userId, v.TbUser.UserId),
 			},
 			PlayUrl:       getVideoUrl(v.PlayUrl),
 			CoverUrl:      getImageUrl(v.CoverUrl),
@@ -98,8 +98,8 @@ func isFollow(uId int64, vId int64) bool {
 	if uId == -1 {
 		return false
 	}
-	// TODO 查看该uId用户是否关注了该vId视频
-	return true
+	// 查看该uId用户是否关注了该视频作者
+	return dao.IsFollwer(uId, vId)
 }
 
 func isFavorite(uId int64, vId int64) bool {
@@ -107,5 +107,5 @@ func isFavorite(uId int64, vId int64) bool {
 		return false
 	}
 	// TODO 查看该uId用户是否点赞了vId该视频
-	return true
+	return dao.IsFavorite(uId, vId)
 }

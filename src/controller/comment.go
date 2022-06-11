@@ -57,15 +57,7 @@ type CommentController struct {
 */
 
 func (cc *CommentController) GetList(ctx iris.Context) mvc.Result {
-	token := ctx.URLParam("token")
 	video_id := ctx.URLParam("video_id")
-	//user_id := ctx.URLParam("user_id")
-	if token == "" {
-		return mvc.Response{
-			Object: Response{StatusCode: 1, StatusMsg: "请先登录..."},
-		}
-	}
-	//fmt.Println(token, video_id, user_id)
 	sql := "select comment_id,tb_comment.user_id,content,create_time,name from tb_comment inner join tb_user on tb_comment.user_id=tb_user.user_id and video_id=? order by create_time desc;"
 	rows, err := sqlSession.Query(sql, video_id)
 	if err != nil {
@@ -97,12 +89,6 @@ func (cc *CommentController) GetList(ctx iris.Context) mvc.Result {
 
 func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 	var actionRequest CommentActionRequest
-	//若前端传过来的是一个json格式字符串的话下面方法可以获取并封装成一个actionRequest对象
-	//err := ctx.ReadJSON(&actionRequest)
-	//if err != nil {
-	//	log.Fatal(err)
-	//	return mvc.Response{Object: Response{StatusCode: 1, StatusMsg: "请求失败!!!"}}
-	//}
 
 	fmt.Println(ctx.URLParams())
 
@@ -121,10 +107,7 @@ func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 		if err != nil {
 			return mvc.Response{Object: Response{StatusCode: 1, StatusMsg: "发表失败!!!"}}
 		}
-		//发布评论后，视频评论要加1
-		//先查询视频的总评论数
-		//可以直接查video表，但是测试为了准确性，直接查comment
-		//rows, _ := sqlSession.Query("select comment_count from tb_video where video_id=?", actionRequest.VideoId)
+		
 		rows, _ := sqlSession.Query("select count(*) from tb_comment where video_id=?", actionRequest.VideoId)
 		var count int
 		if rows.Next() {
@@ -142,10 +125,7 @@ func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 			}
 		}
 
-		//删除评论后，视频评论要-1
-		//先查询视频的总评论数
-		//可以直接查video表，但是测试为了准确性，直接查comment
-		//rows, _ := sqlSession.Query("select comment_count from tb_video where video_id=?", actionRequest.VideoId)
+	
 		rows, _ := sqlSession.Query("select count(*) from tb_comment where video_id=?", actionRequest.VideoId)
 		var count int64
 		if rows.Next() {

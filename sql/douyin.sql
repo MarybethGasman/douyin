@@ -13,7 +13,8 @@ DROP TABLE IF EXISTS `tb_favorite`;
 CREATE TABLE `tb_favorite` (
   `favorite_id` bigint NOT NULL AUTO_INCREMENT,
   `username` varchar(40) DEFAULT '',
-  `video_id` bigint DEFAULT '0',
+  `user_id` bigint DEFAULT 0,
+  `video_id` bigint DEFAULT 0,
   `is_deleted` tinyint DEFAULT 0,
   PRIMARY KEY (`favorite_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -47,8 +48,7 @@ CREATE TABLE `tb_video` (
     `favorite_count` int(11) DEFAULT '0',
     `comment_count` int(11) DEFAULT '0',
     `title` text CHARACTER SET utf8 COMMENT '视频标题',
-    `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP) COMMENT '创建时间',
-    `update_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON
-UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`video_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -1,8 +1,8 @@
 datasource:
   driverName: mysql
-  dataSourceName: root:qzzx91112@tcp(127.0.0.1:3306)/douyin_team
+  dataSourceName: sandaiyidui:qingxun@tcp(124.223.112.154:3306)/douyin
 redis:
-  host: localhost
+  host: 124.223.112.154
   port: 6379
   password:
 server:
@@ -15,6 +15,6 @@ video:
   filePath: upload/ # 如果存放本机的话 这个就是服务器中视频存放的目录
 
 cos:
-  SecretId: SecretId
-  SecretKey: SecretKey
+  SecretId: AKID1rRlpc7LJ1ScW9VaOwDCuMXR4QWLtABY
+  SecretKey: 7xWoqb8NL2SaR1MRGo44nEOHtEI4apnT
   url: https://hzbucket-1312272501.cos.ap-guangzhou.myqcloud.com

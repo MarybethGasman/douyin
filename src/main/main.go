@@ -1,9 +1,18 @@
 package main
 
+// 抖音项目
+// 三带一队:
+// @陈鹤中 @张博思 @简懿豪 @谭盟 @徐政 @杨彬烜 @解城文 @梁明栩
+// 使用iris框架作为web框架，部分接口使用gorm操作数据库，部分接口使用原生接口操作数据库
+// 使用viper作为项目application.yaml配置管理，数据存储使用mysql和redis
+// 登录，注册接口：谭盟
+// 视频流接口和投稿接口 简懿豪
+// 用户信息和粉丝列表 张博思
+// 发布列表 梁明栩
+// 赞操作和点赞列表 杨彬烜
+// 评论操作和评论列表 徐政
+// 关注操作和关注列表 陈鹤中
 import (
-	. "douyin/src/config"
-	. "douyin/src/controller"
-	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"strconv"
 )

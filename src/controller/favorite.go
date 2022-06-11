@@ -63,7 +63,7 @@ func (fc *FavoriteController) PostAction(ctx iris.Context) mvc.Result {
 		}
 	}
 	var response mvc.Response
-	userId, _ = cache.RCGet(token).Int64()
+	userId, _ := cache.RCGet(token).Int64()
 	cache.RCSet(token, userId, time.Minute*30)
 	user := SelectUserById(userId)
 	tx, err := DB.Begin()
@@ -108,8 +108,8 @@ func (fc *FavoriteController) PostAction(ctx iris.Context) mvc.Result {
 
 func (fc *FavoriteController) GetList(ctx iris.Context) mvc.Result {
 	var token = ctx.URLParamDefault("token", "")
-	var userId = ctx.URLParamInt64Default("user_id", -1)
-	if token == "" || userId == -1 {
+	var authorId = ctx.URLParamInt64Default("user_id", -1)
+	if token == "" || authorId == -1 {
 		return mvc.Response{
 			Object: Response{
 				StatusCode: -1,
@@ -117,11 +117,11 @@ func (fc *FavoriteController) GetList(ctx iris.Context) mvc.Result {
 			},
 		}
 	}
-	
+
 	var response mvc.Response
 	userId, _ := cache.RCGet(token).Int64()
 	cache.RCSet(token, userId, time.Minute*30)
-	rows, err := DB.Query("select video_id, play_url, cover_url, favorite_count, comment_count, title,tu.user_id,tu.name,follow_count, follower_count from tb_video tv inner join tb_user tu on tv.user_id = tu.user_id where video_id in (select video_id from tb_favorite where user_id = ? and is_deleted = 0)", userId)
+	rows, err := DB.Query("select video_id, play_url, cover_url, favorite_count, comment_count, title,tu.user_id,tu.name,follow_count, follower_count from tb_video tv inner join tb_user tu on tv.user_id = tu.user_id where video_id in (select video_id from tb_favorite where user_id = ? and is_deleted = 0)", authorId)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -131,6 +131,7 @@ func (fc *FavoriteController) GetList(ctx iris.Context) mvc.Result {
 	for rows.Next() {
 		var favoriteVideo VideoList2
 		err = rows.Scan(&favoriteVideo.Id, &favoriteVideo.PlayURL, &favoriteVideo.CoverURL, &favoriteVideo.FavoriteCount, &favoriteVideo.CommentCount, &favoriteVideo.Title, &favoriteVideo.Author.Id, &favoriteVideo.Author.Name, &favoriteVideo.Author.FollowCount, &favoriteVideo.Author.FollowerCount)
+		favoriteVideo.Author.IsFollow = isFollow(userId, favoriteVideo.Author.Id)
 		videoListResponse.VideoLists = append(videoListResponse.VideoLists, favoriteVideo)
 		if err != nil {
 			log.Fatalln(err)
@@ -140,4 +141,17 @@ func (fc *FavoriteController) GetList(ctx iris.Context) mvc.Result {
 		Object: videoListResponse,
 	}
 	return response
+}
+
+func isFollow(userId int64, authorId int64) bool {
+	if userId == -1 {
+		return false
+	}
+	row := DB.QueryRow("select relation_id from tb_relation where follower_id = ? and following_id = ? and isdeleted = 0", userId, authorId)
+	relationId := -1
+	row.Scan(&relationId)
+	if relationId > 0 {
+		return true
+	}
+	return false
 }

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"douyin/src/cache"
 	. "douyin/src/common"
 	"douyin/src/service"
 	"github.com/kataras/iris/v12"
@@ -20,21 +19,21 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 
 	request := ctx.Request()
 	//获取参数
-	token := request.FormValue("token")
-	userId := cache.RCGet(token).Val()
+	//token := request.FormValue("token")
+	//userId := cache.RCGet(token).Val()
 	uid := request.FormValue("user_id")
 
-	if userId == "" {
-		_, err := ctx.JSON(VideoListResponse{
-			StatusCode: 301,
-			StatusMsg:  "鉴权失败，请检测是否登录",
-			VideoLists: []VideoList2{},
-		})
-		if err != nil {
-			log.Println(err.Error())
-		}
-		return
-	}
+	//if userId == "" {
+	//	_, err := ctx.JSON(VideoListResponse{
+	//		StatusCode: 301,
+	//		StatusMsg:  "鉴权失败，请检测是否登录",
+	//		VideoLists: []VideoList2{},
+	//	})
+	//	if err != nil {
+	//		log.Println(err.Error())
+	//	}
+	//	return
+	//}
 	//获取视频列表
 	useridINT, err := strconv.Atoi(uid)
 	if err != nil {

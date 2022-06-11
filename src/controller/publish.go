@@ -22,6 +22,7 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 	//获取参数
 	token := request.FormValue("token")
 	userId := cache.RCGet(token).Val()
+	uid := request.FormValue("user_id")
 
 	if userId == "" {
 		_, err := ctx.JSON(VideoListResponse{
@@ -35,7 +36,7 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 		return
 	}
 	//获取视频列表
-	useridINT, err := strconv.Atoi(userId)
+	useridINT, err := strconv.Atoi(uid)
 	if err != nil {
 		log.Println(err)
 	}

@@ -117,15 +117,7 @@ func (fc *FavoriteController) GetList(ctx iris.Context) mvc.Result {
 			},
 		}
 	}
-
-	if !cache.RCExists(token) {
-		return mvc.Response{
-			Object: Response{
-				StatusCode: -1,
-				StatusMsg:  "鉴权失败，检查登录状态",
-			},
-		}
-	}
+	
 	var response mvc.Response
 	userId, _ := cache.RCGet(token).Int64()
 	cache.RCSet(token, userId, time.Minute*30)

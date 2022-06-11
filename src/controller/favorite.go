@@ -63,7 +63,7 @@ func (fc *FavoriteController) PostAction(ctx iris.Context) mvc.Result {
 		}
 	}
 	var response mvc.Response
-	userId, _ := cache.RCGet(token).Int64()
+	userId, _ = cache.RCGet(token).Int64()
 	cache.RCSet(token, userId, time.Minute*30)
 	user := SelectUserById(userId)
 	tx, err := DB.Begin()

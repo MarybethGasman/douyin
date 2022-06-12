@@ -15,6 +15,7 @@ package controller
 // 判断某用户是否点赞某视频：先查redis，存在直接返回，不存在去数据库找
 
 import (
+	"douyin/src/config"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
@@ -126,11 +127,13 @@ func (fc *FavoriteController) GetList(ctx iris.Context) mvc.Result {
 		log.Fatalln(err)
 	}
 	defer rows.Close()
-
+	baseUrl := config.AppConfig.GetString("video.imageUrl")
 	var videoListResponse VideoListResponse
 	for rows.Next() {
 		var favoriteVideo VideoList2
 		err = rows.Scan(&favoriteVideo.Id, &favoriteVideo.PlayURL, &favoriteVideo.CoverURL, &favoriteVideo.FavoriteCount, &favoriteVideo.CommentCount, &favoriteVideo.Title, &favoriteVideo.Author.Id, &favoriteVideo.Author.Name, &favoriteVideo.Author.FollowCount, &favoriteVideo.Author.FollowerCount)
+		favoriteVideo.PlayURL = baseUrl + favoriteVideo.PlayURL
+		favoriteVideo.CoverURL = baseUrl + favoriteVideo.CoverURL
 		favoriteVideo.Author.IsFollow = isFollow(userId, favoriteVideo.Author.Id)
 		videoListResponse.VideoLists = append(videoListResponse.VideoLists, favoriteVideo)
 		if err != nil {

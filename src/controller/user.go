@@ -3,6 +3,7 @@ package controller
 import (
 	"douyin/src/common"
 	userService "douyin/src/service"
+	"douyin/src/utils"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
@@ -25,7 +26,7 @@ func (uc *UserController) PostRegister(ctx iris.Context) mvc.Result {
 			},
 		}
 	}
-	//password = utils.MD5(password)
+	password = utils.MD5WithSalt(password)
 	var response = userService.Register(username, password)
 
 	return mvc.Response{
@@ -44,7 +45,7 @@ func (uc *UserController) PostLogin(ctx iris.Context) mvc.Response {
 			},
 		}
 	}
-	response := userService.Login(username, password)
+	response := userService.Login(username, utils.MD5WithSalt(password))
 
 	return mvc.Response{
 		Object: response,

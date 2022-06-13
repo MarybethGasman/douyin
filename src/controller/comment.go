@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"douyin/src/cache"
-	. "douyin/src/common"
-	db2 "douyin/src/db"
+	"douyin/cache"
+	. "douyin/common"
+	db2 "douyin/db"
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
@@ -107,7 +107,7 @@ func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 		if err != nil {
 			return mvc.Response{Object: Response{StatusCode: 1, StatusMsg: "发表失败!!!"}}
 		}
-		
+
 		rows, _ := sqlSession.Query("select count(*) from tb_comment where video_id=?", actionRequest.VideoId)
 		var count int
 		if rows.Next() {
@@ -125,7 +125,6 @@ func (cc *CommentController) PostAction(ctx iris.Context) mvc.Result {
 			}
 		}
 
-	
 		rows, _ := sqlSession.Query("select count(*) from tb_comment where video_id=?", actionRequest.VideoId)
 		var count int64
 		if rows.Next() {

@@ -3,9 +3,9 @@ package service
 import (
 	"bytes"
 	"context"
-	"douyin/src/cache"
-	"douyin/src/config"
-	"douyin/src/db"
+	"douyin/cache"
+	config2 "douyin/config"
+	"douyin/db"
 	"fmt"
 	"github.com/disintegration/imaging"
 	"github.com/kataras/iris/v12"
@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	FilePath = config.AppConfig.GetString("video.filePath")
+	FilePath = config2.AppConfig.GetString("video.filePath")
 )
 
 // Contribution 视频投稿
@@ -86,7 +86,7 @@ func Contribution(ctx iris.Context) {
 	}
 
 	//将文件存储到桶当中
-	_, err = config.Cos.Object.PutFromFile(context.Background(), "/videos/"+fileName, FilePath+fileName, nil)
+	_, err = config2.Cos.Object.PutFromFile(context.Background(), "/videos/"+fileName, FilePath+fileName, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -147,7 +147,7 @@ func GetSnapshot(videoPath, snapshotPath string, frameNum int) (snapshotName str
 	snapshotName = names[len(names)-1] + ".jpeg"
 
 	//将文件存储到桶当中
-	_, err = config.Cos.Object.PutFromFile(context.Background(), "/pictures/"+snapshotName, snapshotPath+".jpeg", nil)
+	_, err = config2.Cos.Object.PutFromFile(context.Background(), "/pictures/"+snapshotName, snapshotPath+".jpeg", nil)
 	if err != nil {
 		panic(err)
 	}

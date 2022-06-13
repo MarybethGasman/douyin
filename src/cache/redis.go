@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	. "douyin/src/config"
+	. "douyin/config"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"time"

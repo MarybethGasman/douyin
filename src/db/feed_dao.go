@@ -1,7 +1,7 @@
 package db
 
 import (
-	"douyin/src/config"
+	"douyin/config"
 	"os"
 	"strconv"
 	"time"

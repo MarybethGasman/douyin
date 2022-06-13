@@ -1,8 +1,8 @@
 package controller
 
 import (
-	. "douyin/src/common"
-	"douyin/src/service"
+	. "douyin/common"
+	service2 "douyin/service"
 	"github.com/kataras/iris/v12"
 	"log"
 	"strconv"
@@ -39,7 +39,7 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 	if err != nil {
 		log.Println(err)
 	}
-	videoLists := service.GetVideoListsById(useridINT)
+	videoLists := service2.GetVideoListsById(useridINT)
 
 	//不知道为什么videoLists不能为空，等我解决吧
 	//已解决：videoLists应为是数组，所以是空是[]，而不是nil
@@ -54,5 +54,5 @@ func (pc *PublishController) GetList(ctx iris.Context) {
 }
 
 func (pc *PublishController) PostAction(ctx iris.Context) {
-	service.Contribution(ctx)
+	service2.Contribution(ctx)
 }

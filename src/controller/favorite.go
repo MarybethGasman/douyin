@@ -15,15 +15,15 @@ package controller
 // 判断某用户是否点赞某视频：先查redis，存在直接返回，不存在去数据库找
 
 import (
-	"douyin/src/config"
+	"douyin/cache"
+	. "douyin/common"
+	"douyin/config"
+	. "douyin/db"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )
 
 import (
-	"douyin/src/cache"
-	. "douyin/src/common"
-	. "douyin/src/db"
 	"log"
 	"time"
 )

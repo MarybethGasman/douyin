@@ -4,12 +4,13 @@ package service
 // 登录状态由redis保持，当用户注册或登录后，将用户名和盐值MD5后作为key存入redis，value为用户id
 // 该key的有效期为30分钟，用户每进行一次请求都会续期
 // 常用的用户鉴权方法还有jwt，但简单的redis实现也可满足需求
+// 登录注册传入的password都是经过加密的，以保证安全性
 // author: 谭盟，张博思
 import (
-	. "douyin/src/cache"
-	. "douyin/src/common"
-	. "douyin/src/db"
-	"douyin/src/utils"
+	. "douyin/cache"
+	. "douyin/common"
+	. "douyin/db"
+	"douyin/utils"
 	"time"
 )
 

@@ -1,7 +1,7 @@
 package db
 
 import (
-	. "douyin/src/config"
+	. "douyin/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"

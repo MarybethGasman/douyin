@@ -1,8 +1,8 @@
 package service
 
 import (
-	. "douyin/src/common"
-	db2 "douyin/src/db"
+	. "douyin/common"
+	db2 "douyin/db"
 )
 
 const (

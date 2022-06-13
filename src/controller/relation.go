@@ -2,9 +2,9 @@ package controller
 
 import (
 	"database/sql"
-	. "douyin/src/cache"
-	. "douyin/src/common"
-	"douyin/src/db"
+	. "douyin/cache"
+	. "douyin/common"
+	"douyin/db"
 	"github.com/go-redis/redis/v8"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"

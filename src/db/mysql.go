@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	. "douyin/src/config"
+	. "douyin/config"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 )

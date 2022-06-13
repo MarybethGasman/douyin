@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"douyin/src/common"
-	userService "douyin/src/service"
-	"douyin/src/utils"
+	"douyin/common"
+	userService "douyin/service"
+	"douyin/utils"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 )

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"bytes"
-	"douyin/src/service"
+	service2 "douyin/service"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"os"
@@ -19,7 +19,7 @@ func (fc *FeedController) BeforeActivation(b mvc.BeforeActivation) {
 }
 
 func (fc *FeedController) Get(ctx iris.Context) {
-	ctx.JSON(service.GetFeed(ctx.URLParam("latest_time"), ctx.URLParam("token")))
+	ctx.JSON(service2.GetFeed(ctx.URLParam("latest_time"), ctx.URLParam("token")))
 }
 
 func (fc *FeedController) GetFeedVideo(b iris.Context) {
@@ -34,5 +34,5 @@ func (fc *FeedController) GetFeedVideo(b iris.Context) {
 	ss = ss[:len(ss)-1]
 	path = strings.Join(ss, "\\") + "\\"
 
-	b.SendFile(path+service.FilePath+videoName, videoName)
+	b.SendFile(path+service2.FilePath+videoName, videoName)
 }

@@ -1,9 +1,9 @@
 package service
 
 import (
-	"douyin/src/cache"
-	"douyin/src/config"
-	"douyin/src/db"
+	"douyin/cache"
+	"douyin/config"
+	"douyin/db"
 	"time"
 )
 
